@@ -294,7 +294,7 @@
     
       <div id="slogan" class="container gpro-slogan title">
         
-          Travel all over the world ~
+          
             
       </div>
       
@@ -438,7 +438,7 @@
     }
     var album = getParam('album');
     var album_data = JSON.parse(`{"TEST":{"url":"test","date":"2024-12-20T00:00:00.000Z","style":"fullscreen","cover":"test/OL011838.ryiky0mv7r4.webp","location":[49.280160532002434,-123.12745505680722]}}`);
-    var single_data = JSON.parse(`{"test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp":{"dir":"test","location":[23.053730555555557,113.39607500000001],"name":"85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0","path":"test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp"}}`);
+    var single_data = JSON.parse(`{"test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp":{"dir":"test","location":[23.053730555555557,113.39607500000001],"name":"85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0","path":"test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp","thum":"https://raw.githubusercontent.com/xiaolin2004/gallery/thumbnail/test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp","url":"https://raw.githubusercontent.com/xiaolin2004/gallery/master/test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp"}}`);
 
     var slogan = $("#slogan")[0];
     var map = L.map('map');
@@ -458,7 +458,7 @@
           continue
         }
       }
-      var cover = 'https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail/' + file.substr(0, file.lastIndexOf(".")) + ".webp"
+      var cover = 'https://raw.githubusercontent.com/xiaolin2004/gallery/thumbnail' + file.substr(0, file.lastIndexOf(".")) + ".webp"
       if (v.hasOwnProperty('location') && v.location.length !== 0) {
         // add marker
         var marker = L.marker(v.location).addTo(map);
@@ -477,7 +477,7 @@
         slogan.textContent = key;
       }
       var file = v.cover;
-      var cover = 'https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail/' + file.substr(0, file.lastIndexOf(".")) + ".webp"
+      var cover = 'https://raw.githubusercontent.com/xiaolin2004/gallery/thumbnail' + file.substr(0, file.lastIndexOf(".")) + ".webp"
       if (v.hasOwnProperty('location') && v.location.length !== 0) {
         // set center view.
         if (first === null) {

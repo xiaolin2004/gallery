@@ -812,7 +812,7 @@ ORDER BY random() LIMIT 1;`
                 }
                 const v = JSON.parse(result[0].values[0]);
                 value = v;
-                var imgLink = 'https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master' + '/' + v.path;
+                var imgLink = 'https://raw.githubusercontent.com/xiaolin2004/gallery/master' + '/' + v.path;
                 imageBox.src = '';
                 imageBox.src = imgLink;
                 addBackUp(imageBox,"https://raw.githubusercontent.com/xiaolin2004/gallery/master/", v.path);
