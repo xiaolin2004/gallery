@@ -234,7 +234,7 @@
     
   </a>
   
-  <a class="itp-float-bar-item rounded" href="https://lfkdsk.github.io" title="归档">
+  <a class="itp-float-bar-item rounded" target="_blank" rel="noopener" href="https://lfkdsk.github.io" title="归档">
     
     <iconpark-icon class="navicon" name="inbox"></iconpark-icon>
     
@@ -771,7 +771,7 @@
             var normalData = $("#no-exif-data");
             const name = getParam('name');
             const start = performance.now();
-            var imgLink = 'https://cdn.jsdelivr.net/gh/lfkdsk/gallery@master' + '/' + name;
+            var imgLink = 'https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master' + '/' + name;
             // hide useless button
             $("#tools-wrapper").show();
             $("#copybox").hide();
@@ -828,7 +828,7 @@ WHERE photo.path ='` + name + "'"
                 const v = JSON.parse(result[0].values[0]);
                 console.log(v)
                 imageBox.src = imgLink; //替换图片
-                addBackUp(imageBox, "https://raw.githubusercontent.com/lfkdsk/gallery/master/", name);
+                addBackUp(imageBox, "https://raw.githubusercontent.com/xiaolin2004/gallery/master/", name);
                 var imageFancy = imageBox.parentElement;
                 imageFancy.setAttribute("href", imgLink);
                 var fancyBoxImage = document.getElementsByClassName("fancybox__image")[0];
@@ -866,7 +866,7 @@ WHERE photo.path ='` + name + "'"
   </section>
   
     <section class="footer-logo">
-      <a href="https://lfkdsk.github.io/" target="_blank">
+      <a href="https://xiaolin2004.github.io/" target="_blank">
         <img width="80px" height="80px" style="padding-top: 12px; display: block; margin: 0 auto;" src="https://github.com/lfkdsk/picx-images-hosting/raw/master/20230817/tripper2white.2pbuwaqvndu0.webp" alt="footer logo"></a>
     </section>
   

@@ -241,7 +241,7 @@
     
   </a>
   
-  <a class="itp-float-bar-item rounded" href="https://lfkdsk.github.io" title="归档">
+  <a class="itp-float-bar-item rounded" target="_blank" rel="noopener" href="https://lfkdsk.github.io" title="归档">
     
     <iconpark-icon class="navicon" name="inbox"></iconpark-icon>
     
@@ -438,7 +438,7 @@
     }
     var album = getParam('album');
     var album_data = JSON.parse(`{"TEST":{"url":"test","date":"2024-12-20T00:00:00.000Z","style":"fullscreen","cover":"test/OL011838.ryiky0mv7r4.webp","location":[49.280160532002434,-123.12745505680722]}}`);
-    var single_data = JSON.parse(`{"test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp":{"dir":"test","location":[23.053730555555557,113.39607500000001],"name":"85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0","path":"test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp","thum":"https://cdn.jsdelivr.net/gh/lfkdsk/gallery@thumbnail//test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp","url":"https://cdn.jsdelivr.net/gh/lfkdsk/gallery@master/test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp"}}`);
+    var single_data = JSON.parse(`{"test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp":{"dir":"test","location":[23.053730555555557,113.39607500000001],"name":"85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0","path":"test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/test/85338743-B055-43F2-BCC1-1397081B1450_1_102_o.1jur0p7840o0.webp"}}`);
 
     var slogan = $("#slogan")[0];
     var map = L.map('map');
@@ -458,7 +458,7 @@
           continue
         }
       }
-      var cover = 'https://cdn.jsdelivr.net/gh/lfkdsk/gallery@thumbnail/' + file.substr(0, file.lastIndexOf(".")) + ".webp"
+      var cover = 'https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail/' + file.substr(0, file.lastIndexOf(".")) + ".webp"
       if (v.hasOwnProperty('location') && v.location.length !== 0) {
         // add marker
         var marker = L.marker(v.location).addTo(map);
@@ -477,7 +477,7 @@
         slogan.textContent = key;
       }
       var file = v.cover;
-      var cover = 'https://cdn.jsdelivr.net/gh/lfkdsk/gallery@thumbnail/' + file.substr(0, file.lastIndexOf(".")) + ".webp"
+      var cover = 'https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail/' + file.substr(0, file.lastIndexOf(".")) + ".webp"
       if (v.hasOwnProperty('location') && v.location.length !== 0) {
         // set center view.
         if (first === null) {
@@ -522,7 +522,7 @@
   </section>
   
     <section class="footer-logo">
-      <a href="https://lfkdsk.github.io/" target="_blank">
+      <a href="https://xiaolin2004.github.io/" target="_blank">
         <img width="80px" height="80px" style="padding-top: 12px; display: block; margin: 0 auto;" src="https://github.com/lfkdsk/picx-images-hosting/raw/master/20230817/tripper2white.2pbuwaqvndu0.webp" alt="footer logo"></a>
     </section>
   
