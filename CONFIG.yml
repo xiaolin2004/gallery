@@ -7,10 +7,10 @@ author: lfkdsk
 footer_logo: 
   use: self
   self:
-    link: 'https://lfkdsk.github.io/'
+    link: 'https://xiaolin2004.github.io/'
     src: 'https://github.com/lfkdsk/picx-images-hosting/raw/master/20230817/tripper2white.2pbuwaqvndu0.webp'
 
-url: https://lfkdsk.github.io/gallery
+url: https://xiaolin2004.github.io/gallery
 root: /gallery
 
 photography_page:
@@ -49,7 +49,7 @@ nav:
     link: /gallery/grid-all
     icon: grid-nine
 
-thumbnail_url: https://cdn.jsdelivr.net/gh/lfkdsk/gallery@thumbnail/
-base_url: https://cdn.jsdelivr.net/gh/lfkdsk/gallery@master
-backup_base_url: https://raw.githubusercontent.com/lfkdsk/gallery/master
-backup_thumbnail_url: https://raw.githubusercontent.com/lfkdsk/gallery/thumbnail
+thumbnail_url: https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail/
+base_url: https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master
+backup_base_url: https://raw.githubusercontent.com/xiaolin2004/gallery/master
+backup_thumbnail_url: https://raw.githubusercontent.com/xiaolin2004/gallery/thumbnail
