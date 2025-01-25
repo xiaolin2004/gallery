@@ -2,12 +2,12 @@ title: 照片集
 subtitle: Take Photo Think Seriously
 description: 拿起相机，认真思考
 cover: 'https://github.com/lfkdsk/picx-images-hosting/raw/master/20230817/IMG_7586.4e91my1ve140.17iz0sa56gik.webp'
-author: lfkdsk
+author: DonkeyKane
 
 footer_logo: 
   use: self
   self:
-    link: 'https://xiaolin2004.github.io/'
+    link: 'https://xiaolin2004.github.io/my_blog'
     src: 'https://github.com/lfkdsk/picx-images-hosting/raw/master/20230817/tripper2white.2pbuwaqvndu0.webp'
 
 url: https://xiaolin2004.github.io/gallery
@@ -34,7 +34,7 @@ nav:
     link: /gallery/location
     icon: local-two
   归档: 
-    link: https://lfkdsk.github.io
+    link: https://xiaolin2004.github.io/my_blog
     icon: inbox
   随机:
     link: /gallery/random
