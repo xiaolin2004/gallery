@@ -1,9 +1,10 @@
 河口湖:
   url: Kawaguchiko
-  date: 2025-01-01
+  date: 2025-01-02
   style: fullscreen
   cover: Kawaguchiko/DSC_2299.webp
   location: [35.511952804642995, 138.76401042076589]
+  
 银阁寺:
   url: Ginkaku-ji
   date: 2025-01-01
@@ -24,6 +25,7 @@
   style: fullscreen
   cover: Ryoanji/Hojo_Garden.webp
   location: [35.0346787542641, 135.7182526685196]
+  
 京都鹿苑寺:
   url: Rokuonji
   date: 2025-01-01
