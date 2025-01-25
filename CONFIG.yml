@@ -15,7 +15,7 @@ root: /gallery
 
 photography_page:
   slogan: true
-  slogan_descr: ''
+  slogan_descr: 'DK的日常影集'
   travel_slogan: true
   travel_slogan_descr: ''
 
