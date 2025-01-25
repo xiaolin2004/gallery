@@ -1,19 +1,20 @@
 广州动物园:
   url: GuangzhouZoo
-  date: 2024-12-20
+  date: 2024-12-08
   style: fullscreen
   cover: GuangzhouZoo/DSC_1013-20241207_386.5lelzu9l5to0.webp
   location: [23.813, 113.3093]
+  
 海珠湿地:
   url: Haizhu_wetland
-  date: 2024-12-20
+  date: 2024-10-19
   style: fullscreen
   cover: Haizhu_wetland/F4EECDC6-29AF-4A61-8B11-4AD161941D1F_1_102_o.cjh31irbrwg.webp
   location: [23.04, 113.2150]
 
 上海:
   url: Shanghai
-  date: 2024-12-20
+  date: 2024-1-22
   style: fullscreen
   cover: Shanghai/IMG_2833.3s529jlc2a20.webp
   location: [31.53,122.12]
