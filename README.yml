@@ -1,6 +1,34 @@
+鶴岡八幡宮:
+  url: Tsurugaoka_Hachimangū
+  date: 2025-01-04
+  style: fullscreen
+  cover: Tsurugaoka_Hachimangū/DSC_2960.webp
+  location: [35.32682742688539, 139.55658580265631]
+
+建长寺:
+  url: KAMAKURA
+  date: 2025-01-04
+  style: fullscreen
+  cover: KAMAKURA/DSC_2890.webp
+  location: [35.331633856110834, 139.55486500299733]
+
+円覚寺:
+  url: Yuen_Kwok_Buddhist_Temple
+  date: 2025-01-04
+  style: fullscreen
+  cover: Yuen_Kwok_Buddhist_Temple/DSC_2879.webp
+  location: [35.33785675442661, 139.5473427071686]
+
+佐助稻荷:
+  url: Sasuke_Inari_Shrine
+  date: 2025-01-04
+  style: fullscreen
+  cover: Sasuke_Inari_Shrine/DSC_2808.webp
+  location: [35.3245365510434, 139.53893336852806]
+
 长谷寺:
   url: Hasedera_Temple
-  date: 2025-01-03
+  date: 2025-01-04
   style: fullscreen
   cover: Hasedera_Temple/DSC_2653.webp
   location: [35.31260455030413, 139.53308485503288]
