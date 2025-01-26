@@ -1,3 +1,52 @@
+鶴岡八幡宮:
+  url: Tsurugaoka_Hachimangū
+  date: 2025-01-04
+  style: fullscreen
+  cover: Tsurugaoka_Hachimangū/DSC_2960.webp
+  location: [35.32682742688539, 139.55658580265631]
+
+建长寺:
+  url: KAMAKURA
+  date: 2025-01-04
+  style: fullscreen
+  cover: KAMAKURA/DSC_2890.webp
+  location: [35.331633856110834, 139.55486500299733]
+
+円覚寺:
+  url: Yuen_Kwok_Buddhist_Temple
+  date: 2025-01-04
+  style: fullscreen
+  cover: Yuen_Kwok_Buddhist_Temple/DSC_2879.webp
+  location: [35.33785675442661, 139.5473427071686]
+
+佐助稻荷:
+  url: Sasuke_Inari_Shrine
+  date: 2025-01-04
+  style: fullscreen
+  cover: Sasuke_Inari_Shrine/DSC_2808.webp
+  location: [35.3245365510434, 139.53893336852806]
+
+长谷寺:
+  url: Hasedera_Temple
+  date: 2025-01-04
+  style: fullscreen
+  cover: Hasedera_Temple/DSC_2653.webp
+  location: [35.31260455030413, 139.53308485503288]
+  
+江之岛:
+  url: Enoshima
+  date: 2025-01-03
+  style: fullscreen
+  cover: Enoshima/DSC_2552.webp
+  location: [35.29988560519222, 139.48071449024832]
+  
+河口湖:
+  url: Kawaguchiko
+  date: 2025-01-02
+  style: fullscreen
+  cover: Kawaguchiko/DSC_2299.webp
+  location: [35.511952804642995, 138.76401042076589]
+  
 银阁寺:
   url: Ginkaku-ji
   date: 2025-01-01
@@ -18,6 +67,7 @@
   style: fullscreen
   cover: Ryoanji/Hojo_Garden.webp
   location: [35.0346787542641, 135.7182526685196]
+  
 京都鹿苑寺:
   url: Rokuonji
   date: 2025-01-01
