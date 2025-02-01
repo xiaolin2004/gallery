@@ -11,7 +11,14 @@
   style: fullscreen
   cover: Asakusa/DSC_3679.webp
   location: [35.714913161091005, 139.7966874840087]
-  
+
+东京皇居:
+  url: Imperial-Palace
+  date: 2025-01-06
+  style: fullscreen
+  cover: Imperial-Palace/DSC_3603.webp
+  location: [35.680561467639755, 139.7538282626852]
+
 鶴岡八幡宮:
   url: Tsurugaoka_Hachimangu
   date: 2025-01-04
