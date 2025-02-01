@@ -727,7 +727,7 @@
     )
 ) as data;    
 `.replaceAll(":year", year)
- .replaceAll(":thum", '"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery/thumbnail/"');
+ .replaceAll(":thum", '"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail/"');
     console.log(sql)
     var data = db.exec(sql);
     const DATA = JSON.parse(data[0].values[0][0])

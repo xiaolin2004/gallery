@@ -773,7 +773,7 @@
             var normalData = $("#no-exif-data");
             const name = getParam('name');
             const start = performance.now();
-            var imgLink = 'https://raw.githubusercontent.com/xiaolin2004/gallery/master' + '/' + name;
+            var imgLink = 'https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master' + '/' + name;
             // hide useless button
             $("#tools-wrapper").show();
             $("#copybox").hide();
@@ -830,7 +830,7 @@ WHERE photo.path ='` + name + "'"
                 const v = JSON.parse(result[0].values[0]);
                 console.log(v)
                 imageBox.src = imgLink; //替换图片
-                addBackUp(imageBox, "https://cdn.jsdelivr.net/gh/xiaolin2004/gallery/master/", name);
+                addBackUp(imageBox, "https://raw.githubusercontent.com/xiaolin2004/gallery/master/", name);
                 var imageFancy = imageBox.parentElement;
                 imageFancy.setAttribute("href", imgLink);
                 var fancyBoxImage = document.getElementsByClassName("fancybox__image")[0];

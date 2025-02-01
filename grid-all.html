@@ -377,10 +377,10 @@ ORDER BY
                 for (const image of images) {
                     var d = document.createElement("div");
                     d.classList = "gpro-tile lazy";
-                    d.setAttribute("data-src", 'https://cdn.jsdelivr.net/gh/xiaolin2004/gallery/thumbnail/' + image.path.replace(/\.\w+$/, '.webp'));
+                    d.setAttribute("data-src", 'https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail/' + image.path.replace(/\.\w+$/, '.webp'));
                     var a = document.createElement("a");
                     a.setAttribute("data-fancybox", "gallery");
-                    a.href = 'https://raw.githubusercontent.com/xiaolin2004/gallery/master/' + image.path;
+                    a.href = 'https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/' + image.path;
                     a.appendChild(d);
                     grid.appendChild(a);
                 }

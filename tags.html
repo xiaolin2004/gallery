@@ -329,7 +329,7 @@ WHERE tag.name = "` + tag + "\"";
             // ele.href = "/gallery/tags.html"
             const d = document.createElement("div");
             d.classList = "gpro-tile lazy"
-            d.setAttribute("style", 'background-image: url("https://cdn.jsdelivr.net/gh/xiaolin2004/gallery/thumbnail/' + imgpath.substr(0, imgpath.lastIndexOf(".")) + '.webp")')
+            d.setAttribute("style", 'background-image: url("https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail/' + imgpath.substr(0, imgpath.lastIndexOf(".")) + '.webp")')
             ele.appendChild(d);
             res.appendChild(ele);
           }
