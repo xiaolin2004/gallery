@@ -96,6 +96,14 @@
   cover: Hangzhou/IMG_3323.webp
   location: [30.241016350933727, 120.1015356415278]
 
+杭州西湖:
+  url: HangzhouWestLake
+  date: 2024-1-23
+  style: fullscreen
+  cover: HangzhouWestLake/IMG_3140.webp
+  location: [30.238564526525355, 120.14544293773017]
+
+
 上海:
   url: Shanghai
   date: 2024-1-22
