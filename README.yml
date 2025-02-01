@@ -12,6 +12,14 @@
   cover: Asakusa/DSC_3679.webp
   location: [35.714913161091005, 139.7966874840087]
 
+东京塔:
+  url: Tokyo_Tower
+  date: 2025-01-06
+  style: fullscreen
+  cover: Tokyo_Tower/DSC_3636.webp
+  location: [35.65875916019065, 139.74544681046206]
+
+
 东京皇居:
   url: Imperial-Palace
   date: 2025-01-06
