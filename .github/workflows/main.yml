@@ -84,3 +84,12 @@ jobs:
         user_name: ${{ env.GIT_USER }}
         user_email: ${{ env.GIT_EMAIL }}
         commit_msg: ${{ github.event.head_commit.message }}  
+    - name: Install Vercel CLI
+      run: npm install -g vercel
+
+    - name: Authenticate with Vercel
+      run: vercel login ${{ secrets.VERCEL_ACCESS_TOKEN }}
+
+    - name: Deploy to Vercel
+      run: vercel --prod --token ${{ secrets.VERCEL_ACCESS_TOKEN }}
+      
