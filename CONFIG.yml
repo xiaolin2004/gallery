@@ -23,7 +23,7 @@ google_analytics:
   use: gtag
   ga_id: 
   ga_api: 
-  gtag_id: G-8TMSDJG47Q
+  gtag_id: 
 
 follow_challenge:
   feedId: "55889147392629760"
