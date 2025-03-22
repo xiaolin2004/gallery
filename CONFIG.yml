@@ -26,8 +26,8 @@ google_analytics:
   gtag_id: 
 
 follow_challenge:
-  feedId: "55889147392629760"
-  userId: "41784388753060864"
+  feedId: ""
+  userId: ""
 
 nav:
   地图:
