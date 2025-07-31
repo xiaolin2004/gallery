@@ -462,7 +462,7 @@
       if (v.hasOwnProperty('location') && v.location.length !== 0) {
         // add marker
         var marker = L.marker(v.location).addTo(map);
-        marker.bindPopup(`<a href="/gallery/${v.dir}?name=${v.name}">LINK</a>` + `<img class="gmarker nofancy" src=${cover} style="margin-top:4px;" />`);
+        marker.bindPopup(`<a href="https://xiaolin2004.github.io/gallery/${v.dir}?name=${v.name}">LINK</a>` + `<img class="gmarker nofancy" src=${cover} style="margin-top:4px;" />`);
       }
     }
     // album data
@@ -493,7 +493,7 @@
         });
         // add marker
         var marker = L.marker(v.location, {icon: icon}).addTo(map);
-        marker.bindPopup(`<a href="/gallery//${v.url}">${key}</a>` + `<img class="gmarker nofancy" src=${cover} style="margin-top:4px;" />`);
+        marker.bindPopup(`<a href="https://xiaolin2004.github.io/gallery/${v.url}">${key}</a>` + `<img class="gmarker nofancy" src=${cover} style="margin-top:4px;" />`);
         if (firstMark === null) {
           firstMark = marker;
         }
