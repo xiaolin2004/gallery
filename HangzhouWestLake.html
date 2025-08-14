@@ -283,12 +283,13 @@
 </style>
   <!-- Main Content -->
   <script src="js/html2canvas.js"></script>
+<script src="js/mini-live-photo.js"></script>
 <section class="pjax-area">
   <div class="content-area post-album fullscreen-content-area">
     <div class="grid grid-cols-3">
       <div class="fullscreen-pic gap-2 wrapper">
         <div id="all-pic" class="pic-area">
-          <div class="pic-item" />
+          <div id="pic-g" class="pic-item" />
           <img id="imgbox" class="pic-box" src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3030.webp" />
         </div>
         <div id="exif-wrapper" class="pic-wrapper">
@@ -371,7 +372,7 @@
     @media (max-width: 768px) {
         .pic-wrapper {
             padding: 4px 0px;
-        }        
+        }
 
         #exif-param {
             font-size: .5rem;
@@ -395,12 +396,12 @@
         }
     }
 
-    .apple-logo, 
-    .ricoh-logo, 
+    .apple-logo,
+    .ricoh-logo,
     .fujifilm-logo {
         height: 40px;
     }
-    
+
     .nikon-logo {
         height: 50px;
     }
@@ -413,10 +414,10 @@
     .dji-logo {
         width: 60px;
     }
-    
+
     @media (max-width: 768px) {
-        .apple-logo, 
-        .ricoh-logo, 
+        .apple-logo,
+        .ricoh-logo,
         .nikon-logo,
         .fujifilm-logo {
             height: 30px;
@@ -435,8 +436,47 @@
             border-width: thin;
             background-color: white;
             border-color: white;
-        }        
+        }
     }
+
+.mlp-wrap {
+    overflow: hidden;
+    border-radius: inherit;    /* 如果父级有圆角，继承一下更自然 */
+}
+
+.mlp-wrap, [data-livephoto] { position: relative; overflow: hidden; border-radius: inherit; }
+
+/* 初始隐藏视频，启用硬件合成避免闪烁 */
+.mlp-wrap .mlp-video, [data-livephoto] .mlp-video{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:contain;
+  opacity:0; transition:opacity .18s ease, transform .25s ease;
+  will-change: opacity, transform; pointer-events:none;
+}
+
+/* “首帧就绪”后，允许显示（只把不透明度交给 JS 控） */
+.mlp-wrap.is-prepped .mlp-video,
+[data-livephoto].is-prepped .mlp-video{ opacity:0; }
+
+/* 开始播放时再交叉淡入 */
+.mlp-wrap.is-playing .mlp-video,
+[data-livephoto].is-playing .mlp-video{ opacity:1; }
+
+/* （可选）缩放动画 */
+.mlp-wrap.is-zoom .mlp-video,
+[data-livephoto].is-zoom .mlp-video{ transform: scale(1.04); }
+
+[data-livephoto].is-playing {
+  -webkit-touch-callout: none;
+  user-select: none;
+  touch-action: none;
+}
+
+/* 禁止浏览器把 img/video 当成可拖拽对象 */
+[data-livephoto] img,
+[data-livephoto] video {
+  -webkit-user-drag: none;
+  user-drag: none; /* 非标准，但部分浏览器支持 */
+}
 </style>
       </div>
       <p id="descbox" class="text-center text-xs hint-text" hidden>  </p>
@@ -452,13 +492,16 @@
           
           
           
+          
           <a class="album-item lazy" id="0"
             name="IMG_3030" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3030.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3030.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/60s F2.8 ISO 125 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:21 14:29:39","EXIF ExposureTime":"1/60s","EXIF FNumber":"F2.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 125","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3030","path":"HangzhouWestLake/IMG_3030.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3030.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3030.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3030.webp"
             aria-label="the photo 0"></a>
+          
           
           
           
@@ -474,9 +517,11 @@
             name="IMG_3038" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3038.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3038.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/60s F1.8 ISO 640 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:21 21:27:14","EXIF ExposureTime":"1/60s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 640","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3038","path":"HangzhouWestLake/IMG_3038.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3038.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3038.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3038.webp"
             aria-label="the photo 1"></a>
+          
           
           
           
@@ -492,9 +537,11 @@
             name="IMG_3039" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3039.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3039.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/60s F2.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:21 21:31:38","EXIF ExposureTime":"1/60s","EXIF FNumber":"F2.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3039","path":"HangzhouWestLake/IMG_3039.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3039.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3039.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3039.webp"
             aria-label="the photo 2"></a>
+          
           
           
           
@@ -510,9 +557,11 @@
             name="IMG_3042" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3042.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3042.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/320s F6.3 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 10:24:55","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3042","path":"HangzhouWestLake/IMG_3042.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3042.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3042.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3042.webp"
             aria-label="the photo 3"></a>
+          
           
           
           
@@ -528,9 +577,11 @@
             name="IMG_3043" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3043.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3043.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F7.1 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 10:34:24","EXIF ExposureTime":"1/400s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3043","path":"HangzhouWestLake/IMG_3043.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3043.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3043.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3043.webp"
             aria-label="the photo 4"></a>
+          
           
           
           
@@ -546,9 +597,11 @@
             name="IMG_3044" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3044.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3044.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F7.1 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 10:34:24","EXIF ExposureTime":"1/400s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3044","path":"HangzhouWestLake/IMG_3044.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3044.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3044.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3044.webp"
             aria-label="the photo 5"></a>
+          
           
           
           
@@ -564,9 +617,11 @@
             name="IMG_3045" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3045.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3045.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F7.1 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 10:34:37","EXIF ExposureTime":"1/400s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3045","path":"HangzhouWestLake/IMG_3045.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3045.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3045.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3045.webp"
             aria-label="the photo 6"></a>
+          
           
           
           
@@ -582,9 +637,11 @@
             name="IMG_3054" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3054.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3054.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F7.1 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 10:42:04","EXIF ExposureTime":"1/400s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3054","path":"HangzhouWestLake/IMG_3054.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3054.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3054.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3054.webp"
             aria-label="the photo 7"></a>
+          
           
           
           
@@ -600,9 +657,11 @@
             name="IMG_3060" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3060.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3060.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/80s F3.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 10:50:33","EXIF ExposureTime":"1/80s","EXIF FNumber":"F3.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3060","path":"HangzhouWestLake/IMG_3060.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3060.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3060.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3060.webp"
             aria-label="the photo 8"></a>
+          
           
           
           
@@ -618,9 +677,11 @@
             name="IMG_3063" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3063.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3063.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F7.1 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 10:52:11","EXIF ExposureTime":"1/400s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3063","path":"HangzhouWestLake/IMG_3063.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3063.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3063.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3063.webp"
             aria-label="the photo 9"></a>
+          
           
           
           
@@ -636,9 +697,11 @@
             name="IMG_3070" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3070.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3070.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/320s F5.6 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 10:55:26","EXIF ExposureTime":"1/320s","EXIF FNumber":"F5.6","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3070","path":"HangzhouWestLake/IMG_3070.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3070.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3070.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3070.webp"
             aria-label="the photo 10"></a>
+          
           
           
           
@@ -654,9 +717,11 @@
             name="IMG_3071" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3071.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3071.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/320s F5.6 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 10:57:12","EXIF ExposureTime":"1/320s","EXIF FNumber":"F5.6","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3071","path":"HangzhouWestLake/IMG_3071.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3071.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3071.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3071.webp"
             aria-label="the photo 11"></a>
+          
           
           
           
@@ -672,9 +737,11 @@
             name="IMG_3072" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3072.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3072.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/250s F5.6 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 10:57:14","EXIF ExposureTime":"1/250s","EXIF FNumber":"F5.6","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3072","path":"HangzhouWestLake/IMG_3072.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3072.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3072.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3072.webp"
             aria-label="the photo 12"></a>
+          
           
           
           
@@ -690,9 +757,11 @@
             name="IMG_3073" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3073.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3073.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/100s F3.5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:00:19","EXIF ExposureTime":"1/100s","EXIF FNumber":"F3.5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3073","path":"HangzhouWestLake/IMG_3073.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3073.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3073.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3073.webp"
             aria-label="the photo 13"></a>
+          
           
           
           
@@ -708,9 +777,11 @@
             name="IMG_3076" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3076.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3076.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/250s F5.6 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:03:10","EXIF ExposureTime":"1/250s","EXIF FNumber":"F5.6","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3076","path":"HangzhouWestLake/IMG_3076.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3076.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3076.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3076.webp"
             aria-label="the photo 14"></a>
+          
           
           
           
@@ -726,9 +797,11 @@
             name="IMG_3083" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3083.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3083.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F7.1 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:10:00","EXIF ExposureTime":"1/400s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3083","path":"HangzhouWestLake/IMG_3083.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3083.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3083.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3083.webp"
             aria-label="the photo 15"></a>
+          
           
           
           
@@ -744,9 +817,11 @@
             name="IMG_3089" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3089.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3089.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F7.1 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:11:39","EXIF ExposureTime":"1/400s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3089","path":"HangzhouWestLake/IMG_3089.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3089.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3089.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3089.webp"
             aria-label="the photo 16"></a>
+          
           
           
           
@@ -762,9 +837,11 @@
             name="IMG_3094" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3094.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3094.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F7.1 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:23:01","EXIF ExposureTime":"1/400s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3094","path":"HangzhouWestLake/IMG_3094.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3094.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3094.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3094.webp"
             aria-label="the photo 17"></a>
+          
           
           
           
@@ -780,9 +857,11 @@
             name="IMG_3095" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3095.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3095.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F7.1 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:23:59","EXIF ExposureTime":"1/400s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3095","path":"HangzhouWestLake/IMG_3095.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3095.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3095.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3095.webp"
             aria-label="the photo 18"></a>
+          
           
           
           
@@ -798,9 +877,11 @@
             name="IMG_3096" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3096.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3096.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F7.1 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:24:16","EXIF ExposureTime":"1/400s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3096","path":"HangzhouWestLake/IMG_3096.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3096.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3096.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3096.webp"
             aria-label="the photo 19"></a>
+          
           
           
           
@@ -816,9 +897,11 @@
             name="IMG_3097" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3097.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3097.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F7.1 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:24:55","EXIF ExposureTime":"1/400s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3097","path":"HangzhouWestLake/IMG_3097.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3097.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3097.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3097.webp"
             aria-label="the photo 20"></a>
+          
           
           
           
@@ -834,9 +917,11 @@
             name="IMG_3098" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3098.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3098.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F7.1 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:25:17","EXIF ExposureTime":"1/400s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3098","path":"HangzhouWestLake/IMG_3098.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3098.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3098.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3098.webp"
             aria-label="the photo 21"></a>
+          
           
           
           
@@ -852,9 +937,11 @@
             name="IMG_3099" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3099.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3099.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F7.1 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:26:32","EXIF ExposureTime":"1/400s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3099","path":"HangzhouWestLake/IMG_3099.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3099.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3099.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3099.webp"
             aria-label="the photo 22"></a>
+          
           
           
           
@@ -870,9 +957,11 @@
             name="IMG_3100" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3100.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3100.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F7.1 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:26:33","EXIF ExposureTime":"1/400s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3100","path":"HangzhouWestLake/IMG_3100.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3100.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3100.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3100.webp"
             aria-label="the photo 23"></a>
+          
           
           
           
@@ -888,9 +977,11 @@
             name="IMG_3101" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3101.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3101.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/250s F5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:29:28","EXIF ExposureTime":"1/250s","EXIF FNumber":"F5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3101","path":"HangzhouWestLake/IMG_3101.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3101.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3101.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3101.webp"
             aria-label="the photo 24"></a>
+          
           
           
           
@@ -906,9 +997,11 @@
             name="IMG_3102" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3102.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3102.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F7.1 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:29:48","EXIF ExposureTime":"1/400s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3102","path":"HangzhouWestLake/IMG_3102.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3102.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3102.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3102.webp"
             aria-label="the photo 25"></a>
+          
           
           
           
@@ -924,9 +1017,11 @@
             name="IMG_3110" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3110.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3110.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/3200s F2.5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:41:03","EXIF ExposureTime":"1/3200s","EXIF FNumber":"F2.5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3110","path":"HangzhouWestLake/IMG_3110.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3110.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3110.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3110.webp"
             aria-label="the photo 26"></a>
+          
           
           
           
@@ -942,9 +1037,11 @@
             name="IMG_3112" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3112.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3112.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/2500s F2.5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:41:16","EXIF ExposureTime":"1/2500s","EXIF FNumber":"F2.5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3112","path":"HangzhouWestLake/IMG_3112.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3112.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3112.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3112.webp"
             aria-label="the photo 27"></a>
+          
           
           
           
@@ -960,9 +1057,11 @@
             name="IMG_3118" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3118.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3118.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/1000s F2.5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:42:31","EXIF ExposureTime":"1/1000s","EXIF FNumber":"F2.5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3118","path":"HangzhouWestLake/IMG_3118.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3118.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3118.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3118.webp"
             aria-label="the photo 28"></a>
+          
           
           
           
@@ -978,9 +1077,11 @@
             name="IMG_3119" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3119.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3119.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/640s F2.5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:42:47","EXIF ExposureTime":"1/640s","EXIF FNumber":"F2.5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3119","path":"HangzhouWestLake/IMG_3119.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3119.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3119.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3119.webp"
             aria-label="the photo 29"></a>
+          
           
           
           
@@ -996,9 +1097,11 @@
             name="IMG_3121" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3121.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3121.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/500s F2.5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:42:59","EXIF ExposureTime":"1/500s","EXIF FNumber":"F2.5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3121","path":"HangzhouWestLake/IMG_3121.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3121.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3121.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3121.webp"
             aria-label="the photo 30"></a>
+          
           
           
           
@@ -1014,9 +1117,11 @@
             name="IMG_3122" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3122.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3122.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/640s F2.5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 11:43:01","EXIF ExposureTime":"1/640s","EXIF FNumber":"F2.5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3122","path":"HangzhouWestLake/IMG_3122.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3122.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3122.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3122.webp"
             aria-label="the photo 31"></a>
+          
           
           
           
@@ -1032,9 +1137,11 @@
             name="IMG_3129" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3129.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3129.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/1250s F2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:04:24","EXIF ExposureTime":"1/1250s","EXIF FNumber":"F2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3129","path":"HangzhouWestLake/IMG_3129.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3129.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3129.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3129.webp"
             aria-label="the photo 32"></a>
+          
           
           
           
@@ -1050,9 +1157,11 @@
             name="IMG_3132" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3132.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3132.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/2000s F2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:10:04","EXIF ExposureTime":"1/2000s","EXIF FNumber":"F2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3132","path":"HangzhouWestLake/IMG_3132.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3132.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3132.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3132.webp"
             aria-label="the photo 33"></a>
+          
           
           
           
@@ -1068,9 +1177,11 @@
             name="IMG_3133" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3133.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3133.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/4000s F2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:10:50","EXIF ExposureTime":"1/4000s","EXIF FNumber":"F2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3133","path":"HangzhouWestLake/IMG_3133.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3133.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3133.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3133.webp"
             aria-label="the photo 34"></a>
+          
           
           
           
@@ -1086,9 +1197,11 @@
             name="IMG_3136" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3136.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3136.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/2500s F2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:11:36","EXIF ExposureTime":"1/2500s","EXIF FNumber":"F2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3136","path":"HangzhouWestLake/IMG_3136.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3136.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3136.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3136.webp"
             aria-label="the photo 35"></a>
+          
           
           
           
@@ -1104,9 +1217,11 @@
             name="IMG_3137" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3137.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3137.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/2500s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:23:31","EXIF ExposureTime":"1/2500s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3137","path":"HangzhouWestLake/IMG_3137.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3137.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3137.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3137.webp"
             aria-label="the photo 36"></a>
+          
           
           
           
@@ -1122,9 +1237,11 @@
             name="IMG_3140" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3140.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3140.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/4000s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:26:56","EXIF ExposureTime":"1/4000s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3140","path":"HangzhouWestLake/IMG_3140.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3140.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3140.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3140.webp"
             aria-label="the photo 37"></a>
+          
           
           
           
@@ -1140,9 +1257,11 @@
             name="IMG_3146" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3146.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3146.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/4000s F2.5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:28:35","EXIF ExposureTime":"1/4000s","EXIF FNumber":"F2.5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3146","path":"HangzhouWestLake/IMG_3146.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3146.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3146.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3146.webp"
             aria-label="the photo 38"></a>
+          
           
           
           
@@ -1158,9 +1277,11 @@
             name="IMG_3147" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3147.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3147.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/4000s F2.5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:29:57","EXIF ExposureTime":"1/4000s","EXIF FNumber":"F2.5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3147","path":"HangzhouWestLake/IMG_3147.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3147.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3147.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3147.webp"
             aria-label="the photo 39"></a>
+          
           
           
           
@@ -1176,9 +1297,11 @@
             name="IMG_3148" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3148.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3148.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/1000s F2.5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:35:35","EXIF ExposureTime":"1/1000s","EXIF FNumber":"F2.5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3148","path":"HangzhouWestLake/IMG_3148.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3148.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3148.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3148.webp"
             aria-label="the photo 40"></a>
+          
           
           
           
@@ -1194,9 +1317,11 @@
             name="IMG_3151" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3151.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3151.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/800s F2.5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:36:09","EXIF ExposureTime":"1/800s","EXIF FNumber":"F2.5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3151","path":"HangzhouWestLake/IMG_3151.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3151.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3151.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3151.webp"
             aria-label="the photo 41"></a>
+          
           
           
           
@@ -1212,9 +1337,11 @@
             name="IMG_3153" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3153.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3153.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/1000s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:36:44","EXIF ExposureTime":"1/1000s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3153","path":"HangzhouWestLake/IMG_3153.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3153.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3153.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3153.webp"
             aria-label="the photo 42"></a>
+          
           
           
           
@@ -1230,9 +1357,11 @@
             name="IMG_3154" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3154.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3154.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/1000s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:37:15","EXIF ExposureTime":"1/1000s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3154","path":"HangzhouWestLake/IMG_3154.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3154.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3154.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3154.webp"
             aria-label="the photo 43"></a>
+          
           
           
           
@@ -1248,9 +1377,11 @@
             name="IMG_3155" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3155.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3155.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:38:52","EXIF ExposureTime":"1/400s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3155","path":"HangzhouWestLake/IMG_3155.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3155.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3155.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3155.webp"
             aria-label="the photo 44"></a>
+          
           
           
           
@@ -1266,9 +1397,11 @@
             name="IMG_3156" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3156.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3156.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/500s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:40:25","EXIF ExposureTime":"1/500s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3156","path":"HangzhouWestLake/IMG_3156.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3156.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3156.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3156.webp"
             aria-label="the photo 45"></a>
+          
           
           
           
@@ -1284,9 +1417,11 @@
             name="IMG_3161" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3161.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3161.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/200s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:41:55","EXIF ExposureTime":"1/200s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3161","path":"HangzhouWestLake/IMG_3161.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3161.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3161.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3161.webp"
             aria-label="the photo 46"></a>
+          
           
           
           
@@ -1302,9 +1437,11 @@
             name="IMG_3162" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3162.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3162.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/4000s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:44:37","EXIF ExposureTime":"1/4000s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3162","path":"HangzhouWestLake/IMG_3162.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3162.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3162.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3162.webp"
             aria-label="the photo 47"></a>
+          
           
           
           
@@ -1320,9 +1457,11 @@
             name="IMG_3167" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3167.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3167.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/1600s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:48:55","EXIF ExposureTime":"1/1600s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3167","path":"HangzhouWestLake/IMG_3167.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3167.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3167.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3167.webp"
             aria-label="the photo 48"></a>
+          
           
           
           
@@ -1338,9 +1477,11 @@
             name="IMG_3171" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3171.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3171.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/4000s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 12:52:52","EXIF ExposureTime":"1/4000s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3171","path":"HangzhouWestLake/IMG_3171.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3171.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3171.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3171.webp"
             aria-label="the photo 49"></a>
+          
           
           
           
@@ -1356,9 +1497,11 @@
             name="IMG_3175" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3175.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3175.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/2500s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 13:16:28","EXIF ExposureTime":"1/2500s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3175","path":"HangzhouWestLake/IMG_3175.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3175.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3175.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3175.webp"
             aria-label="the photo 50"></a>
+          
           
           
           
@@ -1374,9 +1517,11 @@
             name="IMG_3176" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3176.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3176.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/2500s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 13:16:29","EXIF ExposureTime":"1/2500s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3176","path":"HangzhouWestLake/IMG_3176.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3176.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3176.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3176.webp"
             aria-label="the photo 51"></a>
+          
           
           
           
@@ -1392,9 +1537,11 @@
             name="IMG_3177" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3177.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3177.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/1600s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 13:16:43","EXIF ExposureTime":"1/1600s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3177","path":"HangzhouWestLake/IMG_3177.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3177.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3177.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3177.webp"
             aria-label="the photo 52"></a>
+          
           
           
           
@@ -1410,9 +1557,11 @@
             name="IMG_3178" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3178.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3178.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/125s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 14:36:56","EXIF ExposureTime":"1/125s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3178","path":"HangzhouWestLake/IMG_3178.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3178.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3178.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3178.webp"
             aria-label="the photo 53"></a>
+          
           
           
           
@@ -1428,9 +1577,11 @@
             name="IMG_3180" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3180.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3180.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/2500s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 14:37:55","EXIF ExposureTime":"1/2500s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3180","path":"HangzhouWestLake/IMG_3180.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3180.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3180.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3180.webp"
             aria-label="the photo 54"></a>
+          
           
           
           
@@ -1446,9 +1597,11 @@
             name="IMG_3181" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3181.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3181.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/800s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 14:38:10","EXIF ExposureTime":"1/800s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3181","path":"HangzhouWestLake/IMG_3181.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3181.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3181.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3181.webp"
             aria-label="the photo 55"></a>
+          
           
           
           
@@ -1464,9 +1617,11 @@
             name="IMG_3186" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3186.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3186.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/400s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 14:40:16","EXIF ExposureTime":"1/400s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3186","path":"HangzhouWestLake/IMG_3186.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3186.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3186.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3186.webp"
             aria-label="the photo 56"></a>
+          
           
           
           
@@ -1482,9 +1637,11 @@
             name="IMG_3189" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3189.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3189.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/800s F5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 14:45:28","EXIF ExposureTime":"1/800s","EXIF FNumber":"F5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3189","path":"HangzhouWestLake/IMG_3189.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3189.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3189.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3189.webp"
             aria-label="the photo 57"></a>
+          
           
           
           
@@ -1500,9 +1657,11 @@
             name="IMG_3190" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3190.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3190.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/60s F5 ISO 400 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 14:47:11","EXIF ExposureTime":"1/60s","EXIF FNumber":"F5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 400","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3190","path":"HangzhouWestLake/IMG_3190.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3190.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3190.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3190.webp"
             aria-label="the photo 58"></a>
+          
           
           
           
@@ -1518,9 +1677,11 @@
             name="IMG_3192" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3192.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3192.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/320s F5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 14:51:35","EXIF ExposureTime":"1/320s","EXIF FNumber":"F5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3192","path":"HangzhouWestLake/IMG_3192.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3192.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3192.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3192.webp"
             aria-label="the photo 59"></a>
+          
           
           
           
@@ -1536,9 +1697,11 @@
             name="IMG_3195" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3195.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3195.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/250s F5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 14:51:53","EXIF ExposureTime":"1/250s","EXIF FNumber":"F5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3195","path":"HangzhouWestLake/IMG_3195.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3195.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3195.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3195.webp"
             aria-label="the photo 60"></a>
+          
           
           
           
@@ -1554,9 +1717,11 @@
             name="IMG_3197" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3197.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3197.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/500s F5 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 14:52:09","EXIF ExposureTime":"1/500s","EXIF FNumber":"F5","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3197","path":"HangzhouWestLake/IMG_3197.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3197.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3197.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3197.webp"
             aria-label="the photo 61"></a>
+          
           
           
           
@@ -1572,9 +1737,11 @@
             name="IMG_3198" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3198.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3198.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/1600s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 14:52:35","EXIF ExposureTime":"1/1600s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3198","path":"HangzhouWestLake/IMG_3198.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3198.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3198.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3198.webp"
             aria-label="the photo 62"></a>
+          
           
           
           
@@ -1590,9 +1757,11 @@
             name="IMG_3205" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3205.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3205.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/1250s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:14:56","EXIF ExposureTime":"1/1250s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3205","path":"HangzhouWestLake/IMG_3205.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3205.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3205.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3205.webp"
             aria-label="the photo 63"></a>
+          
           
           
           
@@ -1608,9 +1777,11 @@
             name="IMG_3206" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3206.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3206.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/640s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:17:06","EXIF ExposureTime":"1/640s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3206","path":"HangzhouWestLake/IMG_3206.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3206.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3206.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3206.webp"
             aria-label="the photo 64"></a>
+          
           
           
           
@@ -1626,9 +1797,11 @@
             name="IMG_3208" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3208.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3208.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/1600s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:21:46","EXIF ExposureTime":"1/1600s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3208","path":"HangzhouWestLake/IMG_3208.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3208.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3208.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3208.webp"
             aria-label="the photo 65"></a>
+          
           
           
           
@@ -1644,9 +1817,11 @@
             name="IMG_3211" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3211.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3211.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/1250s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:22:02","EXIF ExposureTime":"1/1250s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3211","path":"HangzhouWestLake/IMG_3211.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3211.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3211.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3211.webp"
             aria-label="the photo 66"></a>
+          
           
           
           
@@ -1662,9 +1837,11 @@
             name="IMG_3212" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3212.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3212.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/2500s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:26:22","EXIF ExposureTime":"1/2500s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3212","path":"HangzhouWestLake/IMG_3212.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3212.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3212.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3212.webp"
             aria-label="the photo 67"></a>
+          
           
           
           
@@ -1680,9 +1857,11 @@
             name="IMG_3213" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3213.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3213.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/160s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:26:40","EXIF ExposureTime":"1/160s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3213","path":"HangzhouWestLake/IMG_3213.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3213.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3213.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3213.webp"
             aria-label="the photo 68"></a>
+          
           
           
           
@@ -1698,9 +1877,11 @@
             name="IMG_3214" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3214.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3214.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/1600s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:32:56","EXIF ExposureTime":"1/1600s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3214","path":"HangzhouWestLake/IMG_3214.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3214.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3214.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3214.webp"
             aria-label="the photo 69"></a>
+          
           
           
           
@@ -1716,9 +1897,11 @@
             name="IMG_3215" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3215.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3215.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/1600s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:33:42","EXIF ExposureTime":"1/1600s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3215","path":"HangzhouWestLake/IMG_3215.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3215.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3215.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3215.webp"
             aria-label="the photo 70"></a>
+          
           
           
           
@@ -1734,9 +1917,11 @@
             name="IMG_3216" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3216.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3216.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/2000s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:33:57","EXIF ExposureTime":"1/2000s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3216","path":"HangzhouWestLake/IMG_3216.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3216.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3216.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3216.webp"
             aria-label="the photo 71"></a>
+          
           
           
           
@@ -1752,9 +1937,11 @@
             name="IMG_3217" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3217.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3217.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/80s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:34:50","EXIF ExposureTime":"1/80s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3217","path":"HangzhouWestLake/IMG_3217.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3217.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3217.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3217.webp"
             aria-label="the photo 72"></a>
+          
           
           
           
@@ -1770,9 +1957,11 @@
             name="IMG_3218" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3218.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3218.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/500s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:35:12","EXIF ExposureTime":"1/500s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3218","path":"HangzhouWestLake/IMG_3218.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3218.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3218.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3218.webp"
             aria-label="the photo 73"></a>
+          
           
           
           
@@ -1788,9 +1977,11 @@
             name="IMG_3224" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3224.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3224.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/4000s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:36:59","EXIF ExposureTime":"1/4000s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3224","path":"HangzhouWestLake/IMG_3224.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3224.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3224.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3224.webp"
             aria-label="the photo 74"></a>
+          
           
           
           
@@ -1806,9 +1997,11 @@
             name="IMG_3225" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3225.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3225.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/4000s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:37:01","EXIF ExposureTime":"1/4000s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3225","path":"HangzhouWestLake/IMG_3225.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3225.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3225.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3225.webp"
             aria-label="the photo 75"></a>
+          
           
           
           
@@ -1824,9 +2017,11 @@
             name="IMG_3226" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3226.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3226.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/800s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:37:59","EXIF ExposureTime":"1/800s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3226","path":"HangzhouWestLake/IMG_3226.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3226.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3226.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3226.webp"
             aria-label="the photo 76"></a>
+          
           
           
           
@@ -1842,9 +2037,11 @@
             name="IMG_3228" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3228.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3228.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/80s F2.2 ISO 3200 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:45:30","EXIF ExposureTime":"1/80s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 3200","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3228","path":"HangzhouWestLake/IMG_3228.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3228.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3228.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3228.webp"
             aria-label="the photo 77"></a>
+          
           
           
           
@@ -1860,9 +2057,11 @@
             name="IMG_3230" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3230.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3230.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/2000s F2.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 15:59:25","EXIF ExposureTime":"1/2000s","EXIF FNumber":"F2.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3230","path":"HangzhouWestLake/IMG_3230.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3230.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3230.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3230.webp"
             aria-label="the photo 78"></a>
+          
           
           
           
@@ -1878,9 +2077,11 @@
             name="IMG_3238" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3238.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3238.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/200s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 16:15:49","EXIF ExposureTime":"1/200s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3238","path":"HangzhouWestLake/IMG_3238.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3238.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3238.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3238.webp"
             aria-label="the photo 79"></a>
+          
           
           
           
@@ -1896,9 +2097,11 @@
             name="IMG_3246" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3246.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3246.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/800s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 16:17:59","EXIF ExposureTime":"1/800s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3246","path":"HangzhouWestLake/IMG_3246.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3246.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3246.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3246.webp"
             aria-label="the photo 80"></a>
+          
           
           
           
@@ -1914,9 +2117,11 @@
             name="IMG_3249" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3249.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3249.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/800s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 16:18:44","EXIF ExposureTime":"1/800s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3249","path":"HangzhouWestLake/IMG_3249.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3249.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3249.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3249.webp"
             aria-label="the photo 81"></a>
+          
           
           
           
@@ -1932,9 +2137,11 @@
             name="IMG_3252" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3252.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3252.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/1000s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 16:21:12","EXIF ExposureTime":"1/1000s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3252","path":"HangzhouWestLake/IMG_3252.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3252.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3252.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3252.webp"
             aria-label="the photo 82"></a>
+          
           
           
           
@@ -1950,9 +2157,11 @@
             name="IMG_3261" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3261.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3261.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/80s F7.1 ISO 400 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 16:23:43","EXIF ExposureTime":"1/80s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 400","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3261","path":"HangzhouWestLake/IMG_3261.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3261.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3261.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3261.webp"
             aria-label="the photo 83"></a>
+          
           
           
           
@@ -1968,9 +2177,11 @@
             name="IMG_3263" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3263.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3263.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/80s F7.1 ISO 200 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 16:25:23","EXIF ExposureTime":"1/80s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 200","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3263","path":"HangzhouWestLake/IMG_3263.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3263.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3263.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3263.webp"
             aria-label="the photo 84"></a>
+          
           
           
           
@@ -1986,9 +2197,11 @@
             name="IMG_3267" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3267.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3267.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/60s F7.1 ISO 400 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 16:29:20","EXIF ExposureTime":"1/60s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 400","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3267","path":"HangzhouWestLake/IMG_3267.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3267.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3267.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3267.webp"
             aria-label="the photo 85"></a>
+          
           
           
           
@@ -2004,9 +2217,11 @@
             name="IMG_3268" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3268.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3268.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/60s F7.1 ISO 500 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 16:30:03","EXIF ExposureTime":"1/60s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 500","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3268","path":"HangzhouWestLake/IMG_3268.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3268.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3268.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3268.webp"
             aria-label="the photo 86"></a>
+          
           
           
           
@@ -2022,9 +2237,11 @@
             name="IMG_3273" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3273.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3273.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/60s F7.1 ISO 640 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 16:32:04","EXIF ExposureTime":"1/60s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 640","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3273","path":"HangzhouWestLake/IMG_3273.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3273.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3273.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3273.webp"
             aria-label="the photo 87"></a>
+          
           
           
           
@@ -2040,9 +2257,11 @@
             name="IMG_3274" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3274.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3274.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/60s F7.1 ISO 320 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 16:32:22","EXIF ExposureTime":"1/60s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 320","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3274","path":"HangzhouWestLake/IMG_3274.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3274.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3274.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3274.webp"
             aria-label="the photo 88"></a>
+          
           
           
           
@@ -2058,9 +2277,11 @@
             name="IMG_3275" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3275.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3275.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/60s F7.1 ISO 320 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 16:34:55","EXIF ExposureTime":"1/60s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 320","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3275","path":"HangzhouWestLake/IMG_3275.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3275.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3275.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3275.webp"
             aria-label="the photo 89"></a>
+          
           
           
           
@@ -2076,9 +2297,11 @@
             name="IMG_3279" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3279.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3279.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/80s F7.1 ISO 1000 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 16:36:57","EXIF ExposureTime":"1/80s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3279","path":"HangzhouWestLake/IMG_3279.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3279.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3279.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3279.webp"
             aria-label="the photo 90"></a>
+          
           
           
           
@@ -2094,9 +2317,11 @@
             name="IMG_3281" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3281.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3281.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/80s F7.1 ISO 1000 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 16:37:09","EXIF ExposureTime":"1/80s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3281","path":"HangzhouWestLake/IMG_3281.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3281.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3281.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3281.webp"
             aria-label="the photo 91"></a>
+          
           
           
           
@@ -2112,9 +2337,11 @@
             name="IMG_3285" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3285.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3285.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/60s F7.1 ISO 500 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 17:09:34","EXIF ExposureTime":"1/60s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 500","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3285","path":"HangzhouWestLake/IMG_3285.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3285.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3285.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3285.webp"
             aria-label="the photo 92"></a>
+          
           
           
           
@@ -2130,9 +2357,11 @@
             name="IMG_3288" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3288.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3288.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/60s F7.1 ISO 500 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 17:19:43","EXIF ExposureTime":"1/60s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 500","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3288","path":"HangzhouWestLake/IMG_3288.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3288.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3288.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3288.webp"
             aria-label="the photo 93"></a>
+          
           
           
           
@@ -2148,9 +2377,11 @@
             name="IMG_3294" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3294.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3294.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/50s F7.1 ISO 12800 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 17:23:46","EXIF ExposureTime":"1/50s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 12800","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3294","path":"HangzhouWestLake/IMG_3294.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3294.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3294.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3294.webp"
             aria-label="the photo 94"></a>
+          
           
           
           
@@ -2166,9 +2397,11 @@
             name="IMG_3295" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3295.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3295.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/50s F7.1 ISO 12800 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:22 17:23:52","EXIF ExposureTime":"1/50s","EXIF FNumber":"F7.1","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 12800","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3295","path":"HangzhouWestLake/IMG_3295.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3295.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3295.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3295.webp"
             aria-label="the photo 95"></a>
+          
           
           
           
@@ -2184,9 +2417,11 @@
             name="IMG_3301" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3301.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3301.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/4000s F1.8 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:23 09:35:30","EXIF ExposureTime":"1/4000s","EXIF FNumber":"F1.8","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3301","path":"HangzhouWestLake/IMG_3301.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3301.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3301.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3301.webp"
             aria-label="the photo 96"></a>
+          
           
           
           
@@ -2202,6 +2437,7 @@
             name="IMG_3305" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3305.webp"
             desc=" - · - "
             share="HangzhouWestLake/IMG_3305.webp"
+            video=""
             extra='{"desc":null,"dir":"HangzhouWestLake","exif":"Canon Canon EOS RP 1/80s F3.2 ISO 100 50mm RF50mm F1.8 STM ","exif_data":{"EXIF DateTimeOriginal":"2024:01:23 10:23:43","EXIF ExposureTime":"1/80s","EXIF FNumber":"F3.2","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"RF50mm F1.8 STM","Image Make":"Canon","Image Model":"Canon EOS RP"},"location":[],"name":"IMG_3305","path":"HangzhouWestLake/IMG_3305.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3305.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/HangzhouWestLake/IMG_3305.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//HangzhouWestLake/IMG_3305.webp"
             aria-label="the photo 97"></a>
@@ -2283,6 +2519,7 @@
           name = target.getAttribute('name');
           var desc = target.getAttribute('desc');
           var thum = target.getAttribute('data-src');
+          var video = target.getAttribute('video');
           var v = JSON.parse(target.getAttribute('extra'));
           imageBox.src = thum;
           imageBox.classList.add('blur');
@@ -2296,6 +2533,9 @@
           imageBox.setAttribute("share", target.getAttribute('share'));
           var imageFancy = imageBox.parentElement; // imageBox 是放置大图片的图框
           imageFancy.setAttribute("href", imgLink);
+
+          var picg = document.getElementById('pic-g');
+          attachLivePhoto(picg, video !== '', video);
           var fancyBoxImage = document.getElementsByClassName("fancybox__image")[0];
           if (fancyBoxImage !== undefined) {
             fancyBoxImage.src = imgLink;
@@ -2580,6 +2820,7 @@
             border: 0.8px solid white;
           }
         }
+
       </style>
 </section>
   <!-- Footer -->

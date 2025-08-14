@@ -283,12 +283,13 @@
 </style>
   <!-- Main Content -->
   <script src="js/html2canvas.js"></script>
+<script src="js/mini-live-photo.js"></script>
 <section class="pjax-area">
   <div class="content-area post-album fullscreen-content-area">
     <div class="grid grid-cols-3">
       <div class="fullscreen-pic gap-2 wrapper">
         <div id="all-pic" class="pic-area">
-          <div class="pic-item" />
+          <div id="pic-g" class="pic-item" />
           <img id="imgbox" class="pic-box" src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Bird.webp" />
         </div>
         <div id="exif-wrapper" class="pic-wrapper">
@@ -371,7 +372,7 @@
     @media (max-width: 768px) {
         .pic-wrapper {
             padding: 4px 0px;
-        }        
+        }
 
         #exif-param {
             font-size: .5rem;
@@ -395,12 +396,12 @@
         }
     }
 
-    .apple-logo, 
-    .ricoh-logo, 
+    .apple-logo,
+    .ricoh-logo,
     .fujifilm-logo {
         height: 40px;
     }
-    
+
     .nikon-logo {
         height: 50px;
     }
@@ -413,10 +414,10 @@
     .dji-logo {
         width: 60px;
     }
-    
+
     @media (max-width: 768px) {
-        .apple-logo, 
-        .ricoh-logo, 
+        .apple-logo,
+        .ricoh-logo,
         .nikon-logo,
         .fujifilm-logo {
             height: 30px;
@@ -435,8 +436,47 @@
             border-width: thin;
             background-color: white;
             border-color: white;
-        }        
+        }
     }
+
+.mlp-wrap {
+    overflow: hidden;
+    border-radius: inherit;    /* 如果父级有圆角，继承一下更自然 */
+}
+
+.mlp-wrap, [data-livephoto] { position: relative; overflow: hidden; border-radius: inherit; }
+
+/* 初始隐藏视频，启用硬件合成避免闪烁 */
+.mlp-wrap .mlp-video, [data-livephoto] .mlp-video{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:contain;
+  opacity:0; transition:opacity .18s ease, transform .25s ease;
+  will-change: opacity, transform; pointer-events:none;
+}
+
+/* “首帧就绪”后，允许显示（只把不透明度交给 JS 控） */
+.mlp-wrap.is-prepped .mlp-video,
+[data-livephoto].is-prepped .mlp-video{ opacity:0; }
+
+/* 开始播放时再交叉淡入 */
+.mlp-wrap.is-playing .mlp-video,
+[data-livephoto].is-playing .mlp-video{ opacity:1; }
+
+/* （可选）缩放动画 */
+.mlp-wrap.is-zoom .mlp-video,
+[data-livephoto].is-zoom .mlp-video{ transform: scale(1.04); }
+
+[data-livephoto].is-playing {
+  -webkit-touch-callout: none;
+  user-select: none;
+  touch-action: none;
+}
+
+/* 禁止浏览器把 img/video 当成可拖拽对象 */
+[data-livephoto] img,
+[data-livephoto] video {
+  -webkit-user-drag: none;
+  user-drag: none; /* 非标准，但部分浏览器支持 */
+}
 </style>
       </div>
       <p id="descbox" class="text-center text-xs hint-text" hidden>  </p>
@@ -452,13 +492,16 @@
           
           
           
+          
           <a class="album-item lazy" id="0"
             name="Bird" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Bird.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Bird.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/200s F6.3 ISO 100 180mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 14:59:02","EXIF ExposureTime":"1/200s","EXIF FNumber":"F6.3","EXIF FocalLength":"180mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.02874444444444,135.77274722222222],"name":"Bird","path":"Kamomioya-jinja/Bird.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Bird.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Bird.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Bird.webp"
             aria-label="the photo 0"></a>
+          
           
           
           
@@ -474,9 +517,11 @@
             name="Candid_Photography" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Candid_Photography.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Candid_Photography.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/400s F6.3 ISO 100 130mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 14:34:37","EXIF ExposureTime":"1/400s","EXIF FNumber":"F6.3","EXIF FocalLength":"130mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.02941388888889,135.77186666666668],"name":"Candid_Photography","path":"Kamomioya-jinja/Candid_Photography.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Candid_Photography.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Candid_Photography.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Candid_Photography.webp"
             aria-label="the photo 1"></a>
+          
           
           
           
@@ -492,9 +537,11 @@
             name="Flying_Bird" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Flying_Bird.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Flying_Bird.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/500s F6.3 ISO 100 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 14:23:05","EXIF ExposureTime":"1/500s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.030591666666666,135.7726777777778],"name":"Flying_Bird","path":"Kamomioya-jinja/Flying_Bird.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Flying_Bird.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Flying_Bird.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Flying_Bird.webp"
             aria-label="the photo 2"></a>
+          
           
           
           
@@ -510,9 +557,11 @@
             name="Hasselblad_User" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Hasselblad_User.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Hasselblad_User.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/80s F6.3 ISO 100 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 13:51:37","EXIF ExposureTime":"1/80s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.03477222222222,135.7719027777778],"name":"Hasselblad_User","path":"Kamomioya-jinja/Hasselblad_User.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Hasselblad_User.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Hasselblad_User.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Hasselblad_User.webp"
             aria-label="the photo 3"></a>
+          
           
           
           
@@ -528,9 +577,11 @@
             name="Kamo_River_North_View" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kamo_River_North_View.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Kamo_River_North_View.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/2000s F6.3 ISO 100 102mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 14:21:16","EXIF ExposureTime":"1/2000s","EXIF FNumber":"F6.3","EXIF FocalLength":"102mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.030591666666666,135.7726777777778],"name":"Kamo_River_North_View","path":"Kamomioya-jinja/Kamo_River_North_View.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kamo_River_North_View.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kamo_River_North_View.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kamo_River_North_View.webp"
             aria-label="the photo 4"></a>
+          
           
           
           
@@ -546,9 +597,11 @@
             name="Kamo_River_Waterbird" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kamo_River_Waterbird.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Kamo_River_Waterbird.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 100 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 14:17:55","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.031277777777774,135.7717861111111],"name":"Kamo_River_Waterbird","path":"Kamomioya-jinja/Kamo_River_Waterbird.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kamo_River_Waterbird.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kamo_River_Waterbird.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kamo_River_Waterbird.webp"
             aria-label="the photo 5"></a>
+          
           
           
           
@@ -564,9 +617,11 @@
             name="Kamo_River_Waterbird_Sunlight" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kamo_River_Waterbird_Sunlight.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Kamo_River_Waterbird_Sunlight.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/125s F6.3 ISO 100 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 14:19:44","EXIF ExposureTime":"1/125s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.031277777777774,135.7717861111111],"name":"Kamo_River_Waterbird_Sunlight","path":"Kamomioya-jinja/Kamo_River_Waterbird_Sunlight.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kamo_River_Waterbird_Sunlight.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kamo_River_Waterbird_Sunlight.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kamo_River_Waterbird_Sunlight.webp"
             aria-label="the photo 6"></a>
+          
           
           
           
@@ -582,9 +637,11 @@
             name="Kawai_Shrine_Gate" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kawai_Shrine_Gate.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Kawai_Shrine_Gate.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/160s F5 ISO 100 27mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 13:49:42","EXIF ExposureTime":"1/160s","EXIF FNumber":"F5","EXIF FocalLength":"27mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.03843055555556,135.77210000000002],"name":"Kawai_Shrine_Gate","path":"Kamomioya-jinja/Kawai_Shrine_Gate.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kawai_Shrine_Gate.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kawai_Shrine_Gate.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kawai_Shrine_Gate.webp"
             aria-label="the photo 7"></a>
+          
           
           
           
@@ -600,9 +657,11 @@
             name="Kawai_Shrine_Interior" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kawai_Shrine_Interior.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Kawai_Shrine_Interior.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/400s F5.3 ISO 100 46mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 13:52:00","EXIF ExposureTime":"1/400s","EXIF FNumber":"F5.3","EXIF FocalLength":"46mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.03477222222222,135.7719027777778],"name":"Kawai_Shrine_Interior","path":"Kamomioya-jinja/Kawai_Shrine_Interior.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kawai_Shrine_Interior.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kawai_Shrine_Interior.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kawai_Shrine_Interior.webp"
             aria-label="the photo 8"></a>
+          
           
           
           
@@ -618,9 +677,11 @@
             name="Kawai_Shrine_Main_Hall_Side" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kawai_Shrine_Main_Hall_Side.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Kawai_Shrine_Main_Hall_Side.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/160s F6 ISO 100 63mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 13:53:05","EXIF ExposureTime":"1/160s","EXIF FNumber":"F6","EXIF FocalLength":"63mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.03477222222222,135.7719027777778],"name":"Kawai_Shrine_Main_Hall_Side","path":"Kamomioya-jinja/Kawai_Shrine_Main_Hall_Side.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kawai_Shrine_Main_Hall_Side.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kawai_Shrine_Main_Hall_Side.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kawai_Shrine_Main_Hall_Side.webp"
             aria-label="the photo 9"></a>
+          
           
           
           
@@ -636,9 +697,11 @@
             name="Kawai_Shrine_Moss_Closeup" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kawai_Shrine_Moss_Closeup.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Kawai_Shrine_Moss_Closeup.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/80s F6.3 ISO 100 83mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 13:56:42","EXIF ExposureTime":"1/80s","EXIF FNumber":"F6.3","EXIF FocalLength":"83mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.03474444444444,135.77185277777778],"name":"Kawai_Shrine_Moss_Closeup","path":"Kamomioya-jinja/Kawai_Shrine_Moss_Closeup.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kawai_Shrine_Moss_Closeup.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kawai_Shrine_Moss_Closeup.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kawai_Shrine_Moss_Closeup.webp"
             aria-label="the photo 10"></a>
+          
           
           
           
@@ -654,9 +717,11 @@
             name="Kawai_Shrine_Roof_Moss" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kawai_Shrine_Roof_Moss.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Kawai_Shrine_Roof_Moss.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/125s F5.3 ISO 100 44mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 13:56:31","EXIF ExposureTime":"1/125s","EXIF FNumber":"F5.3","EXIF FocalLength":"44mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.03474444444444,135.77185277777778],"name":"Kawai_Shrine_Roof_Moss","path":"Kamomioya-jinja/Kawai_Shrine_Roof_Moss.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kawai_Shrine_Roof_Moss.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Kawai_Shrine_Roof_Moss.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Kawai_Shrine_Roof_Moss.webp"
             aria-label="the photo 11"></a>
+          
           
           
           
@@ -672,9 +737,11 @@
             name="Red_Maple_Leaves" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Red_Maple_Leaves.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Red_Maple_Leaves.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/125s F5 ISO 100 24mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 13:45:03","EXIF ExposureTime":"1/125s","EXIF FNumber":"F5","EXIF FocalLength":"24mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.03843055555556,135.77210000000002],"name":"Red_Maple_Leaves","path":"Kamomioya-jinja/Red_Maple_Leaves.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Red_Maple_Leaves.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Red_Maple_Leaves.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Red_Maple_Leaves.webp"
             aria-label="the photo 12"></a>
+          
           
           
           
@@ -690,9 +757,11 @@
             name="Shimogamo_Shrine_1" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Shimogamo_Shrine_1.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Shimogamo_Shrine_1.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/200s F6 ISO 100 65mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 13:32:41","EXIF ExposureTime":"1/200s","EXIF FNumber":"F6","EXIF FocalLength":"65mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.03303888888889,135.72140277777777],"name":"Shimogamo_Shrine_1","path":"Kamomioya-jinja/Shimogamo_Shrine_1.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Shimogamo_Shrine_1.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Shimogamo_Shrine_1.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Shimogamo_Shrine_1.webp"
             aria-label="the photo 13"></a>
+          
           
           
           
@@ -708,9 +777,11 @@
             name="Shimogamo_Shrine_2" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Shimogamo_Shrine_2.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Shimogamo_Shrine_2.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/320s F5.6 ISO 100 50mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 13:33:29","EXIF ExposureTime":"1/320s","EXIF FNumber":"F5.6","EXIF FocalLength":"50mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.03843055555556,135.77210000000002],"name":"Shimogamo_Shrine_2","path":"Kamomioya-jinja/Shimogamo_Shrine_2.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Shimogamo_Shrine_2.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Shimogamo_Shrine_2.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Shimogamo_Shrine_2.webp"
             aria-label="the photo 14"></a>
+          
           
           
           
@@ -726,9 +797,11 @@
             name="Shrine_Gate_Charcoal_Fire" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Shrine_Gate_Charcoal_Fire.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Shrine_Gate_Charcoal_Fire.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/160s F5.3 ISO 100 43mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 13:37:08","EXIF ExposureTime":"1/160s","EXIF FNumber":"F5.3","EXIF FocalLength":"43mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.03843055555556,135.77210000000002],"name":"Shrine_Gate_Charcoal_Fire","path":"Kamomioya-jinja/Shrine_Gate_Charcoal_Fire.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Shrine_Gate_Charcoal_Fire.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Shrine_Gate_Charcoal_Fire.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Shrine_Gate_Charcoal_Fire.webp"
             aria-label="the photo 15"></a>
+          
           
           
           
@@ -744,9 +817,11 @@
             name="Upward_View_Kamo_River_Bridge" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Upward_View_Kamo_River_Bridge.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Upward_View_Kamo_River_Bridge.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/500s F5.6 ISO 100 57mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 14:20:19","EXIF ExposureTime":"1/500s","EXIF FNumber":"F5.6","EXIF FocalLength":"57mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.031277777777774,135.7717861111111],"name":"Upward_View_Kamo_River_Bridge","path":"Kamomioya-jinja/Upward_View_Kamo_River_Bridge.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Upward_View_Kamo_River_Bridge.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Upward_View_Kamo_River_Bridge.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Upward_View_Kamo_River_Bridge.webp"
             aria-label="the photo 16"></a>
+          
           
           
           
@@ -762,6 +837,7 @@
             name="Yellow_Leaves" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Yellow_Leaves.webp"
             desc=" - · - "
             share="Kamomioya-jinja/Yellow_Leaves.webp"
+            video=""
             extra='{"desc":null,"dir":"Kamomioya-jinja","exif":"NIKON CORPORATION NIKON Z 5 1/320s F5.6 ISO 100 51mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:01 13:46:12","EXIF ExposureTime":"1/320s","EXIF FNumber":"F5.6","EXIF FocalLength":"51mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.03843055555556,135.77210000000002],"name":"Yellow_Leaves","path":"Kamomioya-jinja/Yellow_Leaves.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Yellow_Leaves.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Kamomioya-jinja/Yellow_Leaves.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Kamomioya-jinja/Yellow_Leaves.webp"
             aria-label="the photo 17"></a>
@@ -843,6 +919,7 @@
           name = target.getAttribute('name');
           var desc = target.getAttribute('desc');
           var thum = target.getAttribute('data-src');
+          var video = target.getAttribute('video');
           var v = JSON.parse(target.getAttribute('extra'));
           imageBox.src = thum;
           imageBox.classList.add('blur');
@@ -856,6 +933,9 @@
           imageBox.setAttribute("share", target.getAttribute('share'));
           var imageFancy = imageBox.parentElement; // imageBox 是放置大图片的图框
           imageFancy.setAttribute("href", imgLink);
+
+          var picg = document.getElementById('pic-g');
+          attachLivePhoto(picg, video !== '', video);
           var fancyBoxImage = document.getElementsByClassName("fancybox__image")[0];
           if (fancyBoxImage !== undefined) {
             fancyBoxImage.src = imgLink;
@@ -1140,6 +1220,7 @@
             border: 0.8px solid white;
           }
         }
+
       </style>
 </section>
   <!-- Footer -->

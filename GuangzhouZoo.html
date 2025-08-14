@@ -283,12 +283,13 @@
 </style>
   <!-- Main Content -->
   <script src="js/html2canvas.js"></script>
+<script src="js/mini-live-photo.js"></script>
 <section class="pjax-area">
   <div class="content-area post-album fullscreen-content-area">
     <div class="grid grid-cols-3">
       <div class="fullscreen-pic gap-2 wrapper">
         <div id="all-pic" class="pic-area">
-          <div class="pic-item" />
+          <div id="pic-g" class="pic-item" />
           <img id="imgbox" class="pic-box" src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0931-20241205_347.4did1e3icbq0.webp" />
         </div>
         <div id="exif-wrapper" class="pic-wrapper">
@@ -371,7 +372,7 @@
     @media (max-width: 768px) {
         .pic-wrapper {
             padding: 4px 0px;
-        }        
+        }
 
         #exif-param {
             font-size: .5rem;
@@ -395,12 +396,12 @@
         }
     }
 
-    .apple-logo, 
-    .ricoh-logo, 
+    .apple-logo,
+    .ricoh-logo,
     .fujifilm-logo {
         height: 40px;
     }
-    
+
     .nikon-logo {
         height: 50px;
     }
@@ -413,10 +414,10 @@
     .dji-logo {
         width: 60px;
     }
-    
+
     @media (max-width: 768px) {
-        .apple-logo, 
-        .ricoh-logo, 
+        .apple-logo,
+        .ricoh-logo,
         .nikon-logo,
         .fujifilm-logo {
             height: 30px;
@@ -435,8 +436,47 @@
             border-width: thin;
             background-color: white;
             border-color: white;
-        }        
+        }
     }
+
+.mlp-wrap {
+    overflow: hidden;
+    border-radius: inherit;    /* 如果父级有圆角，继承一下更自然 */
+}
+
+.mlp-wrap, [data-livephoto] { position: relative; overflow: hidden; border-radius: inherit; }
+
+/* 初始隐藏视频，启用硬件合成避免闪烁 */
+.mlp-wrap .mlp-video, [data-livephoto] .mlp-video{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:contain;
+  opacity:0; transition:opacity .18s ease, transform .25s ease;
+  will-change: opacity, transform; pointer-events:none;
+}
+
+/* “首帧就绪”后，允许显示（只把不透明度交给 JS 控） */
+.mlp-wrap.is-prepped .mlp-video,
+[data-livephoto].is-prepped .mlp-video{ opacity:0; }
+
+/* 开始播放时再交叉淡入 */
+.mlp-wrap.is-playing .mlp-video,
+[data-livephoto].is-playing .mlp-video{ opacity:1; }
+
+/* （可选）缩放动画 */
+.mlp-wrap.is-zoom .mlp-video,
+[data-livephoto].is-zoom .mlp-video{ transform: scale(1.04); }
+
+[data-livephoto].is-playing {
+  -webkit-touch-callout: none;
+  user-select: none;
+  touch-action: none;
+}
+
+/* 禁止浏览器把 img/video 当成可拖拽对象 */
+[data-livephoto] img,
+[data-livephoto] video {
+  -webkit-user-drag: none;
+  user-drag: none; /* 非标准，但部分浏览器支持 */
+}
 </style>
       </div>
       <p id="descbox" class="text-center text-xs hint-text" hidden>  </p>
@@ -452,13 +492,16 @@
           
           
           
+          
           <a class="album-item lazy" id="0"
             name="DSC_0931-20241205_347.4did1e3icbq0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0931-20241205_347.4did1e3icbq0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0931-20241205_347.4did1e3icbq0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 320 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:05 17:26:16","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 320","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_0931-20241205_347.4did1e3icbq0","path":"GuangzhouZoo/DSC_0931-20241205_347.4did1e3icbq0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0931-20241205_347.4did1e3icbq0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0931-20241205_347.4did1e3icbq0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0931-20241205_347.4did1e3icbq0.webp"
             aria-label="the photo 0"></a>
+          
           
           
           
@@ -474,9 +517,11 @@
             name="DSC_0933-20241207_349.4tzesi49tqg0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0933-20241207_349.4tzesi49tqg0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0933-20241207_349.4tzesi49tqg0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 450 84mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:08:50","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"84mm","EXIF ISOSpeedRatings":"ISO 450","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.137597222222222,113.30178055555555],"name":"DSC_0933-20241207_349.4tzesi49tqg0","path":"GuangzhouZoo/DSC_0933-20241207_349.4tzesi49tqg0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0933-20241207_349.4tzesi49tqg0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0933-20241207_349.4tzesi49tqg0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0933-20241207_349.4tzesi49tqg0.webp"
             aria-label="the photo 1"></a>
+          
           
           
           
@@ -492,9 +537,11 @@
             name="DSC_0934-20241207_350.42k41k14i8o0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0934-20241207_350.42k41k14i8o0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0934-20241207_350.42k41k14i8o0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 640 105mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:08:54","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"105mm","EXIF ISOSpeedRatings":"ISO 640","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.137597222222222,113.30178055555555],"name":"DSC_0934-20241207_350.42k41k14i8o0","path":"GuangzhouZoo/DSC_0934-20241207_350.42k41k14i8o0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0934-20241207_350.42k41k14i8o0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0934-20241207_350.42k41k14i8o0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0934-20241207_350.42k41k14i8o0.webp"
             aria-label="the photo 2"></a>
+          
           
           
           
@@ -510,9 +557,11 @@
             name="DSC_0937-20241207_351.66etbn7c3ks0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0937-20241207_351.66etbn7c3ks0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0937-20241207_351.66etbn7c3ks0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1250 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:10:00","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1250","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.137597222222222,113.30178055555555],"name":"DSC_0937-20241207_351.66etbn7c3ks0","path":"GuangzhouZoo/DSC_0937-20241207_351.66etbn7c3ks0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0937-20241207_351.66etbn7c3ks0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0937-20241207_351.66etbn7c3ks0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0937-20241207_351.66etbn7c3ks0.webp"
             aria-label="the photo 3"></a>
+          
           
           
           
@@ -528,9 +577,11 @@
             name="DSC_0938-20241207_352.1zxmc2dsjry8" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0938-20241207_352.1zxmc2dsjry8.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0938-20241207_352.1zxmc2dsjry8.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1100 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:10:01","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.137597222222222,113.30178055555555],"name":"DSC_0938-20241207_352.1zxmc2dsjry8","path":"GuangzhouZoo/DSC_0938-20241207_352.1zxmc2dsjry8.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0938-20241207_352.1zxmc2dsjry8.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0938-20241207_352.1zxmc2dsjry8.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0938-20241207_352.1zxmc2dsjry8.webp"
             aria-label="the photo 4"></a>
+          
           
           
           
@@ -546,9 +597,11 @@
             name="DSC_0939-20241207_353.2y7dh7qaf420" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0939-20241207_353.2y7dh7qaf420.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0939-20241207_353.2y7dh7qaf420.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 900 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:10:08","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 900","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.137597222222222,113.30178055555555],"name":"DSC_0939-20241207_353.2y7dh7qaf420","path":"GuangzhouZoo/DSC_0939-20241207_353.2y7dh7qaf420.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0939-20241207_353.2y7dh7qaf420.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0939-20241207_353.2y7dh7qaf420.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0939-20241207_353.2y7dh7qaf420.webp"
             aria-label="the photo 5"></a>
+          
           
           
           
@@ -564,9 +617,11 @@
             name="DSC_0940-20241207_354.5kczx2hutc40" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0940-20241207_354.5kczx2hutc40.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0940-20241207_354.5kczx2hutc40.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1400 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:10:22","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1400","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.137597222222222,113.30178055555555],"name":"DSC_0940-20241207_354.5kczx2hutc40","path":"GuangzhouZoo/DSC_0940-20241207_354.5kczx2hutc40.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0940-20241207_354.5kczx2hutc40.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0940-20241207_354.5kczx2hutc40.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0940-20241207_354.5kczx2hutc40.webp"
             aria-label="the photo 6"></a>
+          
           
           
           
@@ -582,9 +637,11 @@
             name="DSC_0941-20241207_355.5qv1ohqvlo40" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0941-20241207_355.5qv1ohqvlo40.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0941-20241207_355.5qv1ohqvlo40.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F9 ISO 100 77mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:12:25","EXIF ExposureTime":"1/320s","EXIF FNumber":"F9","EXIF FocalLength":"77mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.139566666666667,113.30166388888888],"name":"DSC_0941-20241207_355.5qv1ohqvlo40","path":"GuangzhouZoo/DSC_0941-20241207_355.5qv1ohqvlo40.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0941-20241207_355.5qv1ohqvlo40.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0941-20241207_355.5qv1ohqvlo40.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0941-20241207_355.5qv1ohqvlo40.webp"
             aria-label="the photo 7"></a>
+          
           
           
           
@@ -600,9 +657,11 @@
             name="DSC_0942-20241207_356.6e14vaik7rs0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0942-20241207_356.6e14vaik7rs0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0942-20241207_356.6e14vaik7rs0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F13 ISO 100 77mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:14:57","EXIF ExposureTime":"1/320s","EXIF FNumber":"F13","EXIF FocalLength":"77mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.140325,113.30247222222222],"name":"DSC_0942-20241207_356.6e14vaik7rs0","path":"GuangzhouZoo/DSC_0942-20241207_356.6e14vaik7rs0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0942-20241207_356.6e14vaik7rs0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0942-20241207_356.6e14vaik7rs0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0942-20241207_356.6e14vaik7rs0.webp"
             aria-label="the photo 8"></a>
+          
           
           
           
@@ -618,9 +677,11 @@
             name="DSC_0943-20241207_357.71szfr9objo0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0943-20241207_357.71szfr9objo0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0943-20241207_357.71szfr9objo0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 400 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:17:58","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 400","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14122777777778,113.3022111111111],"name":"DSC_0943-20241207_357.71szfr9objo0","path":"GuangzhouZoo/DSC_0943-20241207_357.71szfr9objo0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0943-20241207_357.71szfr9objo0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0943-20241207_357.71szfr9objo0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0943-20241207_357.71szfr9objo0.webp"
             aria-label="the photo 9"></a>
+          
           
           
           
@@ -636,9 +697,11 @@
             name="DSC_0954-20241207_358.6td0xp1o3n80" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0954-20241207_358.6td0xp1o3n80.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0954-20241207_358.6td0xp1o3n80.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 160 104mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:19:47","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"104mm","EXIF ISOSpeedRatings":"ISO 160","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0954-20241207_358.6td0xp1o3n80","path":"GuangzhouZoo/DSC_0954-20241207_358.6td0xp1o3n80.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0954-20241207_358.6td0xp1o3n80.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0954-20241207_358.6td0xp1o3n80.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0954-20241207_358.6td0xp1o3n80.webp"
             aria-label="the photo 10"></a>
+          
           
           
           
@@ -654,9 +717,11 @@
             name="DSC_0958-20241207_359.4lteazho6ge0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0958-20241207_359.4lteazho6ge0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0958-20241207_359.4lteazho6ge0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 250 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:20:22","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 250","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0958-20241207_359.4lteazho6ge0","path":"GuangzhouZoo/DSC_0958-20241207_359.4lteazho6ge0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0958-20241207_359.4lteazho6ge0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0958-20241207_359.4lteazho6ge0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0958-20241207_359.4lteazho6ge0.webp"
             aria-label="the photo 11"></a>
+          
           
           
           
@@ -672,9 +737,11 @@
             name="DSC_0959-20241207_360.5jxcb6kvec80" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0959-20241207_360.5jxcb6kvec80.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0959-20241207_360.5jxcb6kvec80.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 160 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:20:26","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 160","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0959-20241207_360.5jxcb6kvec80","path":"GuangzhouZoo/DSC_0959-20241207_360.5jxcb6kvec80.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0959-20241207_360.5jxcb6kvec80.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0959-20241207_360.5jxcb6kvec80.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0959-20241207_360.5jxcb6kvec80.webp"
             aria-label="the photo 12"></a>
+          
           
           
           
@@ -690,9 +757,11 @@
             name="DSC_0961-20241207_361.3xei9xkt30y0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0961-20241207_361.3xei9xkt30y0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0961-20241207_361.3xei9xkt30y0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 220 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:20:45","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 220","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0961-20241207_361.3xei9xkt30y0","path":"GuangzhouZoo/DSC_0961-20241207_361.3xei9xkt30y0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0961-20241207_361.3xei9xkt30y0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0961-20241207_361.3xei9xkt30y0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0961-20241207_361.3xei9xkt30y0.webp"
             aria-label="the photo 13"></a>
+          
           
           
           
@@ -708,9 +777,11 @@
             name="DSC_0962-20241207_362.6skv5f6n42g0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0962-20241207_362.6skv5f6n42g0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0962-20241207_362.6skv5f6n42g0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 180 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:21:12","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 180","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0962-20241207_362.6skv5f6n42g0","path":"GuangzhouZoo/DSC_0962-20241207_362.6skv5f6n42g0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0962-20241207_362.6skv5f6n42g0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0962-20241207_362.6skv5f6n42g0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0962-20241207_362.6skv5f6n42g0.webp"
             aria-label="the photo 14"></a>
+          
           
           
           
@@ -726,9 +797,11 @@
             name="DSC_0963-20241207_363.5z4i8c5kilc0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0963-20241207_363.5z4i8c5kilc0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0963-20241207_363.5z4i8c5kilc0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 320 165mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:22:08","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"165mm","EXIF ISOSpeedRatings":"ISO 320","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0963-20241207_363.5z4i8c5kilc0","path":"GuangzhouZoo/DSC_0963-20241207_363.5z4i8c5kilc0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0963-20241207_363.5z4i8c5kilc0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0963-20241207_363.5z4i8c5kilc0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0963-20241207_363.5z4i8c5kilc0.webp"
             aria-label="the photo 15"></a>
+          
           
           
           
@@ -744,9 +817,11 @@
             name="DSC_0964-20241207_364.6utepvb1rs80" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0964-20241207_364.6utepvb1rs80.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0964-20241207_364.6utepvb1rs80.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 320 165mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:22:08","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"165mm","EXIF ISOSpeedRatings":"ISO 320","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0964-20241207_364.6utepvb1rs80","path":"GuangzhouZoo/DSC_0964-20241207_364.6utepvb1rs80.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0964-20241207_364.6utepvb1rs80.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0964-20241207_364.6utepvb1rs80.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0964-20241207_364.6utepvb1rs80.webp"
             aria-label="the photo 16"></a>
+          
           
           
           
@@ -762,9 +837,11 @@
             name="DSC_0965-20241207_365.14bo6tbtiuo0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0965-20241207_365.14bo6tbtiuo0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0965-20241207_365.14bo6tbtiuo0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 320 93mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:22:14","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"93mm","EXIF ISOSpeedRatings":"ISO 320","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0965-20241207_365.14bo6tbtiuo0","path":"GuangzhouZoo/DSC_0965-20241207_365.14bo6tbtiuo0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0965-20241207_365.14bo6tbtiuo0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0965-20241207_365.14bo6tbtiuo0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0965-20241207_365.14bo6tbtiuo0.webp"
             aria-label="the photo 17"></a>
+          
           
           
           
@@ -780,9 +857,11 @@
             name="DSC_0968-20241207_366.5uphj8kt5r00" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0968-20241207_366.5uphj8kt5r00.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0968-20241207_366.5uphj8kt5r00.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 360 170mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:22:41","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"170mm","EXIF ISOSpeedRatings":"ISO 360","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0968-20241207_366.5uphj8kt5r00","path":"GuangzhouZoo/DSC_0968-20241207_366.5uphj8kt5r00.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0968-20241207_366.5uphj8kt5r00.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0968-20241207_366.5uphj8kt5r00.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0968-20241207_366.5uphj8kt5r00.webp"
             aria-label="the photo 18"></a>
+          
           
           
           
@@ -798,9 +877,11 @@
             name="DSC_0973-20241207_367.44pi6i6lbjk0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0973-20241207_367.44pi6i6lbjk0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0973-20241207_367.44pi6i6lbjk0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 560 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:24:08","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 560","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0973-20241207_367.44pi6i6lbjk0","path":"GuangzhouZoo/DSC_0973-20241207_367.44pi6i6lbjk0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0973-20241207_367.44pi6i6lbjk0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0973-20241207_367.44pi6i6lbjk0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0973-20241207_367.44pi6i6lbjk0.webp"
             aria-label="the photo 19"></a>
+          
           
           
           
@@ -816,9 +897,11 @@
             name="DSC_0975-20241207_368.6hqukse308c0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0975-20241207_368.6hqukse308c0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0975-20241207_368.6hqukse308c0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:24:35","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0975-20241207_368.6hqukse308c0","path":"GuangzhouZoo/DSC_0975-20241207_368.6hqukse308c0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0975-20241207_368.6hqukse308c0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0975-20241207_368.6hqukse308c0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0975-20241207_368.6hqukse308c0.webp"
             aria-label="the photo 20"></a>
+          
           
           
           
@@ -834,9 +917,11 @@
             name="DSC_0977-20241207_369.4vfaump2gi00" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0977-20241207_369.4vfaump2gi00.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0977-20241207_369.4vfaump2gi00.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 900 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:24:37","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 900","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0977-20241207_369.4vfaump2gi00","path":"GuangzhouZoo/DSC_0977-20241207_369.4vfaump2gi00.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0977-20241207_369.4vfaump2gi00.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0977-20241207_369.4vfaump2gi00.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0977-20241207_369.4vfaump2gi00.webp"
             aria-label="the photo 21"></a>
+          
           
           
           
@@ -852,9 +937,11 @@
             name="DSC_0978-20241207_370.2kzau0d6fc40" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0978-20241207_370.2kzau0d6fc40.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0978-20241207_370.2kzau0d6fc40.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1100 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:24:42","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0978-20241207_370.2kzau0d6fc40","path":"GuangzhouZoo/DSC_0978-20241207_370.2kzau0d6fc40.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0978-20241207_370.2kzau0d6fc40.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0978-20241207_370.2kzau0d6fc40.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0978-20241207_370.2kzau0d6fc40.webp"
             aria-label="the photo 22"></a>
+          
           
           
           
@@ -870,9 +957,11 @@
             name="DSC_0983-20241207_371.766q1xo46ew0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0983-20241207_371.766q1xo46ew0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0983-20241207_371.766q1xo46ew0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 900 180mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:25:36","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"180mm","EXIF ISOSpeedRatings":"ISO 900","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0983-20241207_371.766q1xo46ew0","path":"GuangzhouZoo/DSC_0983-20241207_371.766q1xo46ew0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0983-20241207_371.766q1xo46ew0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0983-20241207_371.766q1xo46ew0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0983-20241207_371.766q1xo46ew0.webp"
             aria-label="the photo 23"></a>
+          
           
           
           
@@ -888,9 +977,11 @@
             name="DSC_0984-20241207_372.72hzsj5rgpo0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0984-20241207_372.72hzsj5rgpo0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0984-20241207_372.72hzsj5rgpo0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 900 180mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:25:46","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"180mm","EXIF ISOSpeedRatings":"ISO 900","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0984-20241207_372.72hzsj5rgpo0","path":"GuangzhouZoo/DSC_0984-20241207_372.72hzsj5rgpo0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0984-20241207_372.72hzsj5rgpo0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0984-20241207_372.72hzsj5rgpo0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0984-20241207_372.72hzsj5rgpo0.webp"
             aria-label="the photo 24"></a>
+          
           
           
           
@@ -906,9 +997,11 @@
             name="DSC_0986-20241207_373.78e6mohmyas0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0986-20241207_373.78e6mohmyas0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0986-20241207_373.78e6mohmyas0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 640 180mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:26:04","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"180mm","EXIF ISOSpeedRatings":"ISO 640","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0986-20241207_373.78e6mohmyas0","path":"GuangzhouZoo/DSC_0986-20241207_373.78e6mohmyas0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0986-20241207_373.78e6mohmyas0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0986-20241207_373.78e6mohmyas0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0986-20241207_373.78e6mohmyas0.webp"
             aria-label="the photo 25"></a>
+          
           
           
           
@@ -924,9 +1017,11 @@
             name="DSC_0989-20241207_374.5gkmi4bz7ug0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0989-20241207_374.5gkmi4bz7ug0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0989-20241207_374.5gkmi4bz7ug0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:26:32","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0989-20241207_374.5gkmi4bz7ug0","path":"GuangzhouZoo/DSC_0989-20241207_374.5gkmi4bz7ug0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0989-20241207_374.5gkmi4bz7ug0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0989-20241207_374.5gkmi4bz7ug0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0989-20241207_374.5gkmi4bz7ug0.webp"
             aria-label="the photo 26"></a>
+          
           
           
           
@@ -942,9 +1037,11 @@
             name="DSC_0990-20241207_375.1x5dtqy0cz6o" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0990-20241207_375.1x5dtqy0cz6o.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0990-20241207_375.1x5dtqy0cz6o.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:26:34","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0990-20241207_375.1x5dtqy0cz6o","path":"GuangzhouZoo/DSC_0990-20241207_375.1x5dtqy0cz6o.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0990-20241207_375.1x5dtqy0cz6o.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0990-20241207_375.1x5dtqy0cz6o.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0990-20241207_375.1x5dtqy0cz6o.webp"
             aria-label="the photo 27"></a>
+          
           
           
           
@@ -960,9 +1057,11 @@
             name="DSC_0993-20241207_376.46qgt16ssg80" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0993-20241207_376.46qgt16ssg80.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0993-20241207_376.46qgt16ssg80.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:26:49","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0993-20241207_376.46qgt16ssg80","path":"GuangzhouZoo/DSC_0993-20241207_376.46qgt16ssg80.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0993-20241207_376.46qgt16ssg80.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0993-20241207_376.46qgt16ssg80.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0993-20241207_376.46qgt16ssg80.webp"
             aria-label="the photo 28"></a>
+          
           
           
           
@@ -978,9 +1077,11 @@
             name="DSC_0994-20241207_377.209c5ku3nrc0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0994-20241207_377.209c5ku3nrc0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0994-20241207_377.209c5ku3nrc0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:26:50","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0994-20241207_377.209c5ku3nrc0","path":"GuangzhouZoo/DSC_0994-20241207_377.209c5ku3nrc0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0994-20241207_377.209c5ku3nrc0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0994-20241207_377.209c5ku3nrc0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0994-20241207_377.209c5ku3nrc0.webp"
             aria-label="the photo 29"></a>
+          
           
           
           
@@ -996,9 +1097,11 @@
             name="DSC_0996-20241207_378.2n6d8bftyx40" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0996-20241207_378.2n6d8bftyx40.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0996-20241207_378.2n6d8bftyx40.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:26:55","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0996-20241207_378.2n6d8bftyx40","path":"GuangzhouZoo/DSC_0996-20241207_378.2n6d8bftyx40.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0996-20241207_378.2n6d8bftyx40.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0996-20241207_378.2n6d8bftyx40.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0996-20241207_378.2n6d8bftyx40.webp"
             aria-label="the photo 30"></a>
+          
           
           
           
@@ -1014,9 +1117,11 @@
             name="DSC_0997-20241207_379.736wlp44ssw0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0997-20241207_379.736wlp44ssw0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0997-20241207_379.736wlp44ssw0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:27:04","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0997-20241207_379.736wlp44ssw0","path":"GuangzhouZoo/DSC_0997-20241207_379.736wlp44ssw0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0997-20241207_379.736wlp44ssw0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0997-20241207_379.736wlp44ssw0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0997-20241207_379.736wlp44ssw0.webp"
             aria-label="the photo 31"></a>
+          
           
           
           
@@ -1032,9 +1137,11 @@
             name="DSC_0998-20241207_380.767iet5un0s0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0998-20241207_380.767iet5un0s0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0998-20241207_380.767iet5un0s0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:27:06","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0998-20241207_380.767iet5un0s0","path":"GuangzhouZoo/DSC_0998-20241207_380.767iet5un0s0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0998-20241207_380.767iet5un0s0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0998-20241207_380.767iet5un0s0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0998-20241207_380.767iet5un0s0.webp"
             aria-label="the photo 32"></a>
+          
           
           
           
@@ -1050,9 +1157,11 @@
             name="DSC_0999-20241207_381.t2vws1q9p40" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0999-20241207_381.t2vws1q9p40.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_0999-20241207_381.t2vws1q9p40.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:27:15","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_0999-20241207_381.t2vws1q9p40","path":"GuangzhouZoo/DSC_0999-20241207_381.t2vws1q9p40.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0999-20241207_381.t2vws1q9p40.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_0999-20241207_381.t2vws1q9p40.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_0999-20241207_381.t2vws1q9p40.webp"
             aria-label="the photo 33"></a>
+          
           
           
           
@@ -1068,9 +1177,11 @@
             name="DSC_1000-20241207_382.5w8bxn940s00" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1000-20241207_382.5w8bxn940s00.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1000-20241207_382.5w8bxn940s00.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 900 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:27:27","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 900","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_1000-20241207_382.5w8bxn940s00","path":"GuangzhouZoo/DSC_1000-20241207_382.5w8bxn940s00.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1000-20241207_382.5w8bxn940s00.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1000-20241207_382.5w8bxn940s00.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1000-20241207_382.5w8bxn940s00.webp"
             aria-label="the photo 34"></a>
+          
           
           
           
@@ -1086,9 +1197,11 @@
             name="DSC_1001-20241207_383.547gw91ytrc0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1001-20241207_383.547gw91ytrc0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1001-20241207_383.547gw91ytrc0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1000 100mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:27:45","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"100mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_1001-20241207_383.547gw91ytrc0","path":"GuangzhouZoo/DSC_1001-20241207_383.547gw91ytrc0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1001-20241207_383.547gw91ytrc0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1001-20241207_383.547gw91ytrc0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1001-20241207_383.547gw91ytrc0.webp"
             aria-label="the photo 35"></a>
+          
           
           
           
@@ -1104,9 +1217,11 @@
             name="DSC_1003-20241207_384.2hnynh8bjwc0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1003-20241207_384.2hnynh8bjwc0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1003-20241207_384.2hnynh8bjwc0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1000 100mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:27:51","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"100mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_1003-20241207_384.2hnynh8bjwc0","path":"GuangzhouZoo/DSC_1003-20241207_384.2hnynh8bjwc0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1003-20241207_384.2hnynh8bjwc0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1003-20241207_384.2hnynh8bjwc0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1003-20241207_384.2hnynh8bjwc0.webp"
             aria-label="the photo 36"></a>
+          
           
           
           
@@ -1122,9 +1237,11 @@
             name="DSC_1008-20241207_385.4uwaq0xpkxw0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1008-20241207_385.4uwaq0xpkxw0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1008-20241207_385.4uwaq0xpkxw0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 10000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:28:56","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 10000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_1008-20241207_385.4uwaq0xpkxw0","path":"GuangzhouZoo/DSC_1008-20241207_385.4uwaq0xpkxw0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1008-20241207_385.4uwaq0xpkxw0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1008-20241207_385.4uwaq0xpkxw0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1008-20241207_385.4uwaq0xpkxw0.webp"
             aria-label="the photo 37"></a>
+          
           
           
           
@@ -1140,9 +1257,11 @@
             name="DSC_1013-20241207_386.5x1vcg86bew0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1013-20241207_386.5x1vcg86bew0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1013-20241207_386.5x1vcg86bew0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 9000 145mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:29:27","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"145mm","EXIF ISOSpeedRatings":"ISO 9000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_1013-20241207_386.5x1vcg86bew0","path":"GuangzhouZoo/DSC_1013-20241207_386.5x1vcg86bew0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1013-20241207_386.5x1vcg86bew0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1013-20241207_386.5x1vcg86bew0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1013-20241207_386.5x1vcg86bew0.webp"
             aria-label="the photo 38"></a>
+          
           
           
           
@@ -1158,9 +1277,11 @@
             name="DSC_1014-20241207_387.2sort5ncdy40" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1014-20241207_387.2sort5ncdy40.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1014-20241207_387.2sort5ncdy40.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 7200 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:29:42","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 7200","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_1014-20241207_387.2sort5ncdy40","path":"GuangzhouZoo/DSC_1014-20241207_387.2sort5ncdy40.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1014-20241207_387.2sort5ncdy40.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1014-20241207_387.2sort5ncdy40.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1014-20241207_387.2sort5ncdy40.webp"
             aria-label="the photo 39"></a>
+          
           
           
           
@@ -1176,9 +1297,11 @@
             name="DSC_1016-20241207_388.2nsf8t8evto0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1016-20241207_388.2nsf8t8evto0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1016-20241207_388.2nsf8t8evto0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 4500 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:30:05","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 4500","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_1016-20241207_388.2nsf8t8evto0","path":"GuangzhouZoo/DSC_1016-20241207_388.2nsf8t8evto0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1016-20241207_388.2nsf8t8evto0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1016-20241207_388.2nsf8t8evto0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1016-20241207_388.2nsf8t8evto0.webp"
             aria-label="the photo 40"></a>
+          
           
           
           
@@ -1194,9 +1317,11 @@
             name="DSC_1019-20241207_389.1557lmavthr4" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1019-20241207_389.1557lmavthr4.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1019-20241207_389.1557lmavthr4.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 5000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:30:18","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 5000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_1019-20241207_389.1557lmavthr4","path":"GuangzhouZoo/DSC_1019-20241207_389.1557lmavthr4.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1019-20241207_389.1557lmavthr4.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1019-20241207_389.1557lmavthr4.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1019-20241207_389.1557lmavthr4.webp"
             aria-label="the photo 41"></a>
+          
           
           
           
@@ -1212,9 +1337,11 @@
             name="DSC_1024-20241207_390.6f168baxte80" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1024-20241207_390.6f168baxte80.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1024-20241207_390.6f168baxte80.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1800 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:32:50","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1800","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_1024-20241207_390.6f168baxte80","path":"GuangzhouZoo/DSC_1024-20241207_390.6f168baxte80.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1024-20241207_390.6f168baxte80.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1024-20241207_390.6f168baxte80.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1024-20241207_390.6f168baxte80.webp"
             aria-label="the photo 42"></a>
+          
           
           
           
@@ -1230,9 +1357,11 @@
             name="DSC_1025-20241207_391.1ei217cbsleo" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1025-20241207_391.1ei217cbsleo.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1025-20241207_391.1ei217cbsleo.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 2000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:32:59","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 2000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_1025-20241207_391.1ei217cbsleo","path":"GuangzhouZoo/DSC_1025-20241207_391.1ei217cbsleo.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1025-20241207_391.1ei217cbsleo.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1025-20241207_391.1ei217cbsleo.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1025-20241207_391.1ei217cbsleo.webp"
             aria-label="the photo 43"></a>
+          
           
           
           
@@ -1248,9 +1377,11 @@
             name="DSC_1027-20241207_392.126h531sbpls" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1027-20241207_392.126h531sbpls.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1027-20241207_392.126h531sbpls.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 2800 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:33:39","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 2800","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14308888888889,113.30164444444443],"name":"DSC_1027-20241207_392.126h531sbpls","path":"GuangzhouZoo/DSC_1027-20241207_392.126h531sbpls.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1027-20241207_392.126h531sbpls.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1027-20241207_392.126h531sbpls.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1027-20241207_392.126h531sbpls.webp"
             aria-label="the photo 44"></a>
+          
           
           
           
@@ -1266,9 +1397,11 @@
             name="DSC_1028-20241207_393.3mfgx80osck0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1028-20241207_393.3mfgx80osck0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1028-20241207_393.3mfgx80osck0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 2800 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:34:08","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 2800","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144058333333334,113.30159444444445],"name":"DSC_1028-20241207_393.3mfgx80osck0","path":"GuangzhouZoo/DSC_1028-20241207_393.3mfgx80osck0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1028-20241207_393.3mfgx80osck0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1028-20241207_393.3mfgx80osck0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1028-20241207_393.3mfgx80osck0.webp"
             aria-label="the photo 45"></a>
+          
           
           
           
@@ -1284,9 +1417,11 @@
             name="DSC_1029-20241207_394.1ehd7xsb52f4" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1029-20241207_394.1ehd7xsb52f4.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1029-20241207_394.1ehd7xsb52f4.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 3200 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:34:10","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 3200","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144058333333334,113.30159444444445],"name":"DSC_1029-20241207_394.1ehd7xsb52f4","path":"GuangzhouZoo/DSC_1029-20241207_394.1ehd7xsb52f4.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1029-20241207_394.1ehd7xsb52f4.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1029-20241207_394.1ehd7xsb52f4.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1029-20241207_394.1ehd7xsb52f4.webp"
             aria-label="the photo 46"></a>
+          
           
           
           
@@ -1302,9 +1437,11 @@
             name="DSC_1034-20241207_395.3jvlpp6u8yg0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1034-20241207_395.3jvlpp6u8yg0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1034-20241207_395.3jvlpp6u8yg0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 400 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:34:41","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 400","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144058333333334,113.30159444444445],"name":"DSC_1034-20241207_395.3jvlpp6u8yg0","path":"GuangzhouZoo/DSC_1034-20241207_395.3jvlpp6u8yg0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1034-20241207_395.3jvlpp6u8yg0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1034-20241207_395.3jvlpp6u8yg0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1034-20241207_395.3jvlpp6u8yg0.webp"
             aria-label="the photo 47"></a>
+          
           
           
           
@@ -1320,9 +1457,11 @@
             name="DSC_1040-20241207_396.5fnfxrpe1fk0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1040-20241207_396.5fnfxrpe1fk0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1040-20241207_396.5fnfxrpe1fk0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1100 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:38:22","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.143944444444443,113.30058055555556],"name":"DSC_1040-20241207_396.5fnfxrpe1fk0","path":"GuangzhouZoo/DSC_1040-20241207_396.5fnfxrpe1fk0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1040-20241207_396.5fnfxrpe1fk0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1040-20241207_396.5fnfxrpe1fk0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1040-20241207_396.5fnfxrpe1fk0.webp"
             aria-label="the photo 48"></a>
+          
           
           
           
@@ -1338,9 +1477,11 @@
             name="DSC_1041-20241207_397.4llwwob6sqg0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1041-20241207_397.4llwwob6sqg0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1041-20241207_397.4llwwob6sqg0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1100 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:38:22","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.143944444444443,113.30058055555556],"name":"DSC_1041-20241207_397.4llwwob6sqg0","path":"GuangzhouZoo/DSC_1041-20241207_397.4llwwob6sqg0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1041-20241207_397.4llwwob6sqg0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1041-20241207_397.4llwwob6sqg0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1041-20241207_397.4llwwob6sqg0.webp"
             aria-label="the photo 49"></a>
+          
           
           
           
@@ -1356,9 +1497,11 @@
             name="DSC_1042-20241207_398.4a3yyyxffk60" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1042-20241207_398.4a3yyyxffk60.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1042-20241207_398.4a3yyyxffk60.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 900 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:38:32","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 900","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.143944444444443,113.30058055555556],"name":"DSC_1042-20241207_398.4a3yyyxffk60","path":"GuangzhouZoo/DSC_1042-20241207_398.4a3yyyxffk60.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1042-20241207_398.4a3yyyxffk60.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1042-20241207_398.4a3yyyxffk60.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1042-20241207_398.4a3yyyxffk60.webp"
             aria-label="the photo 50"></a>
+          
           
           
           
@@ -1374,9 +1517,11 @@
             name="DSC_1047-20241207_399.16d82zybu800" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1047-20241207_399.16d82zybu800.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1047-20241207_399.16d82zybu800.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 720 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:42:11","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 720","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14355,113.29946944444444],"name":"DSC_1047-20241207_399.16d82zybu800","path":"GuangzhouZoo/DSC_1047-20241207_399.16d82zybu800.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1047-20241207_399.16d82zybu800.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1047-20241207_399.16d82zybu800.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1047-20241207_399.16d82zybu800.webp"
             aria-label="the photo 51"></a>
+          
           
           
           
@@ -1392,9 +1537,11 @@
             name="DSC_1056-20241207_400.46uwbgc24uu0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1056-20241207_400.46uwbgc24uu0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1056-20241207_400.46uwbgc24uu0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 125 155mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:44:31","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"155mm","EXIF ISOSpeedRatings":"ISO 125","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14355,113.29946944444444],"name":"DSC_1056-20241207_400.46uwbgc24uu0","path":"GuangzhouZoo/DSC_1056-20241207_400.46uwbgc24uu0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1056-20241207_400.46uwbgc24uu0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1056-20241207_400.46uwbgc24uu0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1056-20241207_400.46uwbgc24uu0.webp"
             aria-label="the photo 52"></a>
+          
           
           
           
@@ -1410,9 +1557,11 @@
             name="DSC_1057-20241207_401.4mipal6wquw0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1057-20241207_401.4mipal6wquw0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1057-20241207_401.4mipal6wquw0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 640 155mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:44:43","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"155mm","EXIF ISOSpeedRatings":"ISO 640","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14355,113.29946944444444],"name":"DSC_1057-20241207_401.4mipal6wquw0","path":"GuangzhouZoo/DSC_1057-20241207_401.4mipal6wquw0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1057-20241207_401.4mipal6wquw0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1057-20241207_401.4mipal6wquw0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1057-20241207_401.4mipal6wquw0.webp"
             aria-label="the photo 53"></a>
+          
           
           
           
@@ -1428,9 +1577,11 @@
             name="DSC_1059-20241207_402.3w5460tbr9c0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1059-20241207_402.3w5460tbr9c0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1059-20241207_402.3w5460tbr9c0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 720 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:44:59","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 720","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14355,113.29946944444444],"name":"DSC_1059-20241207_402.3w5460tbr9c0","path":"GuangzhouZoo/DSC_1059-20241207_402.3w5460tbr9c0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1059-20241207_402.3w5460tbr9c0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1059-20241207_402.3w5460tbr9c0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1059-20241207_402.3w5460tbr9c0.webp"
             aria-label="the photo 54"></a>
+          
           
           
           
@@ -1446,9 +1597,11 @@
             name="DSC_1067-20241207_403.6i5f6z06jeo0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1067-20241207_403.6i5f6z06jeo0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1067-20241207_403.6i5f6z06jeo0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1100 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:46:35","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14355,113.29946944444444],"name":"DSC_1067-20241207_403.6i5f6z06jeo0","path":"GuangzhouZoo/DSC_1067-20241207_403.6i5f6z06jeo0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1067-20241207_403.6i5f6z06jeo0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1067-20241207_403.6i5f6z06jeo0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1067-20241207_403.6i5f6z06jeo0.webp"
             aria-label="the photo 55"></a>
+          
           
           
           
@@ -1464,9 +1617,11 @@
             name="DSC_1069-20241207_404.5q2zfttkf6k0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1069-20241207_404.5q2zfttkf6k0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1069-20241207_404.5q2zfttkf6k0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 720 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:46:41","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 720","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14355,113.29946944444444],"name":"DSC_1069-20241207_404.5q2zfttkf6k0","path":"GuangzhouZoo/DSC_1069-20241207_404.5q2zfttkf6k0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1069-20241207_404.5q2zfttkf6k0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1069-20241207_404.5q2zfttkf6k0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1069-20241207_404.5q2zfttkf6k0.webp"
             aria-label="the photo 56"></a>
+          
           
           
           
@@ -1482,9 +1637,11 @@
             name="DSC_1070-20241207_405.3wl2eqjglhe0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1070-20241207_405.3wl2eqjglhe0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1070-20241207_405.3wl2eqjglhe0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 800 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:46:44","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 800","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14355,113.29946944444444],"name":"DSC_1070-20241207_405.3wl2eqjglhe0","path":"GuangzhouZoo/DSC_1070-20241207_405.3wl2eqjglhe0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1070-20241207_405.3wl2eqjglhe0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1070-20241207_405.3wl2eqjglhe0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1070-20241207_405.3wl2eqjglhe0.webp"
             aria-label="the photo 57"></a>
+          
           
           
           
@@ -1500,9 +1657,11 @@
             name="DSC_1071-20241207_406.7cvdb6o62tc0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1071-20241207_406.7cvdb6o62tc0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1071-20241207_406.7cvdb6o62tc0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 450 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:46:52","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 450","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14355,113.29946944444444],"name":"DSC_1071-20241207_406.7cvdb6o62tc0","path":"GuangzhouZoo/DSC_1071-20241207_406.7cvdb6o62tc0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1071-20241207_406.7cvdb6o62tc0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1071-20241207_406.7cvdb6o62tc0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1071-20241207_406.7cvdb6o62tc0.webp"
             aria-label="the photo 58"></a>
+          
           
           
           
@@ -1518,9 +1677,11 @@
             name="DSC_1079-20241207_407.6w52csm0obc0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1079-20241207_407.6w52csm0obc0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1079-20241207_407.6w52csm0obc0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 3600 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:49:54","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 3600","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144602777777777,113.29966388888889],"name":"DSC_1079-20241207_407.6w52csm0obc0","path":"GuangzhouZoo/DSC_1079-20241207_407.6w52csm0obc0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1079-20241207_407.6w52csm0obc0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1079-20241207_407.6w52csm0obc0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1079-20241207_407.6w52csm0obc0.webp"
             aria-label="the photo 59"></a>
+          
           
           
           
@@ -1536,9 +1697,11 @@
             name="DSC_1100-20241207_408.2pe4fw2i61k0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1100-20241207_408.2pe4fw2i61k0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1100-20241207_408.2pe4fw2i61k0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 2800 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:52:52","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 2800","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144602777777777,113.29966388888889],"name":"DSC_1100-20241207_408.2pe4fw2i61k0","path":"GuangzhouZoo/DSC_1100-20241207_408.2pe4fw2i61k0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1100-20241207_408.2pe4fw2i61k0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1100-20241207_408.2pe4fw2i61k0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1100-20241207_408.2pe4fw2i61k0.webp"
             aria-label="the photo 60"></a>
+          
           
           
           
@@ -1554,9 +1717,11 @@
             name="DSC_1107-20241207_409.65o15wgcf2o0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1107-20241207_409.65o15wgcf2o0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1107-20241207_409.65o15wgcf2o0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 2800 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:54:40","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 2800","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144602777777777,113.29966388888889],"name":"DSC_1107-20241207_409.65o15wgcf2o0","path":"GuangzhouZoo/DSC_1107-20241207_409.65o15wgcf2o0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1107-20241207_409.65o15wgcf2o0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1107-20241207_409.65o15wgcf2o0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1107-20241207_409.65o15wgcf2o0.webp"
             aria-label="the photo 61"></a>
+          
           
           
           
@@ -1572,9 +1737,11 @@
             name="DSC_1115-20241207_410.5bte9gmbpns0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1115-20241207_410.5bte9gmbpns0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1115-20241207_410.5bte9gmbpns0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 8000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:55:44","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 8000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144602777777777,113.29966388888889],"name":"DSC_1115-20241207_410.5bte9gmbpns0","path":"GuangzhouZoo/DSC_1115-20241207_410.5bte9gmbpns0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1115-20241207_410.5bte9gmbpns0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1115-20241207_410.5bte9gmbpns0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1115-20241207_410.5bte9gmbpns0.webp"
             aria-label="the photo 62"></a>
+          
           
           
           
@@ -1590,9 +1757,11 @@
             name="DSC_1118-20241207_411.5k9necnhcsc0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1118-20241207_411.5k9necnhcsc0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1118-20241207_411.5k9necnhcsc0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 6400 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 16:55:45","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 6400","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144602777777777,113.29966388888889],"name":"DSC_1118-20241207_411.5k9necnhcsc0","path":"GuangzhouZoo/DSC_1118-20241207_411.5k9necnhcsc0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1118-20241207_411.5k9necnhcsc0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1118-20241207_411.5k9necnhcsc0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1118-20241207_411.5k9necnhcsc0.webp"
             aria-label="the photo 63"></a>
+          
           
           
           
@@ -1608,9 +1777,11 @@
             name="DSC_1130-20241207_412.9j2d5dh6f74" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1130-20241207_412.9j2d5dh6f74.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1130-20241207_412.9j2d5dh6f74.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1250 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:00:41","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1250","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144602777777777,113.29966388888889],"name":"DSC_1130-20241207_412.9j2d5dh6f74","path":"GuangzhouZoo/DSC_1130-20241207_412.9j2d5dh6f74.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1130-20241207_412.9j2d5dh6f74.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1130-20241207_412.9j2d5dh6f74.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1130-20241207_412.9j2d5dh6f74.webp"
             aria-label="the photo 64"></a>
+          
           
           
           
@@ -1626,9 +1797,11 @@
             name="DSC_1136-20241207_413.3hfh7by8efs0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1136-20241207_413.3hfh7by8efs0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1136-20241207_413.3hfh7by8efs0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 3200 81mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:01:15","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"81mm","EXIF ISOSpeedRatings":"ISO 3200","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144602777777777,113.29966388888889],"name":"DSC_1136-20241207_413.3hfh7by8efs0","path":"GuangzhouZoo/DSC_1136-20241207_413.3hfh7by8efs0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1136-20241207_413.3hfh7by8efs0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1136-20241207_413.3hfh7by8efs0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1136-20241207_413.3hfh7by8efs0.webp"
             aria-label="the photo 65"></a>
+          
           
           
           
@@ -1644,9 +1817,11 @@
             name="DSC_1137-20241207_414.15u4es995l6o" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1137-20241207_414.15u4es995l6o.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1137-20241207_414.15u4es995l6o.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 2500 81mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:01:21","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"81mm","EXIF ISOSpeedRatings":"ISO 2500","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144602777777777,113.29966388888889],"name":"DSC_1137-20241207_414.15u4es995l6o","path":"GuangzhouZoo/DSC_1137-20241207_414.15u4es995l6o.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1137-20241207_414.15u4es995l6o.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1137-20241207_414.15u4es995l6o.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1137-20241207_414.15u4es995l6o.webp"
             aria-label="the photo 66"></a>
+          
           
           
           
@@ -1662,9 +1837,11 @@
             name="DSC_1140-20241207_416.5zjo46dyw880" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1140-20241207_416.5zjo46dyw880.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1140-20241207_416.5zjo46dyw880.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F5.6 ISO 560 54mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:01:37","EXIF ExposureTime":"1/320s","EXIF FNumber":"F5.6","EXIF FocalLength":"54mm","EXIF ISOSpeedRatings":"ISO 560","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144602777777777,113.29966388888889],"name":"DSC_1140-20241207_416.5zjo46dyw880","path":"GuangzhouZoo/DSC_1140-20241207_416.5zjo46dyw880.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1140-20241207_416.5zjo46dyw880.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1140-20241207_416.5zjo46dyw880.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1140-20241207_416.5zjo46dyw880.webp"
             aria-label="the photo 67"></a>
+          
           
           
           
@@ -1680,9 +1857,11 @@
             name="DSC_1141-20241207_417.4proozrpmyw" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1141-20241207_417.4proozrpmyw.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1141-20241207_417.4proozrpmyw.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F5.6 ISO 400 54mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:01:45","EXIF ExposureTime":"1/320s","EXIF FNumber":"F5.6","EXIF FocalLength":"54mm","EXIF ISOSpeedRatings":"ISO 400","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144602777777777,113.29966388888889],"name":"DSC_1141-20241207_417.4proozrpmyw","path":"GuangzhouZoo/DSC_1141-20241207_417.4proozrpmyw.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1141-20241207_417.4proozrpmyw.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1141-20241207_417.4proozrpmyw.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1141-20241207_417.4proozrpmyw.webp"
             aria-label="the photo 68"></a>
+          
           
           
           
@@ -1698,9 +1877,11 @@
             name="DSC_1142-20241207_418.5hpon7vx0bk0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1142-20241207_418.5hpon7vx0bk0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1142-20241207_418.5hpon7vx0bk0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F5.6 ISO 560 54mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:01:53","EXIF ExposureTime":"1/320s","EXIF FNumber":"F5.6","EXIF FocalLength":"54mm","EXIF ISOSpeedRatings":"ISO 560","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144602777777777,113.29966388888889],"name":"DSC_1142-20241207_418.5hpon7vx0bk0","path":"GuangzhouZoo/DSC_1142-20241207_418.5hpon7vx0bk0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1142-20241207_418.5hpon7vx0bk0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1142-20241207_418.5hpon7vx0bk0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1142-20241207_418.5hpon7vx0bk0.webp"
             aria-label="the photo 69"></a>
+          
           
           
           
@@ -1716,9 +1897,11 @@
             name="DSC_1143-20241207_419.3ohbg8gcixs0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1143-20241207_419.3ohbg8gcixs0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1143-20241207_419.3ohbg8gcixs0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F5.6 ISO 1000 54mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:01:57","EXIF ExposureTime":"1/320s","EXIF FNumber":"F5.6","EXIF FocalLength":"54mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144602777777777,113.29966388888889],"name":"DSC_1143-20241207_419.3ohbg8gcixs0","path":"GuangzhouZoo/DSC_1143-20241207_419.3ohbg8gcixs0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1143-20241207_419.3ohbg8gcixs0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1143-20241207_419.3ohbg8gcixs0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1143-20241207_419.3ohbg8gcixs0.webp"
             aria-label="the photo 70"></a>
+          
           
           
           
@@ -1734,9 +1917,11 @@
             name="DSC_1160-20241207_420.gylbr28keqo" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1160-20241207_420.gylbr28keqo.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1160-20241207_420.gylbr28keqo.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1100 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:04:23","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.144602777777777,113.29966388888889],"name":"DSC_1160-20241207_420.gylbr28keqo","path":"GuangzhouZoo/DSC_1160-20241207_420.gylbr28keqo.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1160-20241207_420.gylbr28keqo.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1160-20241207_420.gylbr28keqo.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1160-20241207_420.gylbr28keqo.webp"
             aria-label="the photo 71"></a>
+          
           
           
           
@@ -1752,9 +1937,11 @@
             name="DSC_1167-20241207_421.346183e8i4q" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1167-20241207_421.346183e8i4q.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1167-20241207_421.346183e8i4q.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/640s F6.3 ISO 1400 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:05:26","EXIF ExposureTime":"1/640s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1400","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14517222222222,113.30044444444444],"name":"DSC_1167-20241207_421.346183e8i4q","path":"GuangzhouZoo/DSC_1167-20241207_421.346183e8i4q.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1167-20241207_421.346183e8i4q.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1167-20241207_421.346183e8i4q.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1167-20241207_421.346183e8i4q.webp"
             aria-label="the photo 72"></a>
+          
           
           
           
@@ -1770,9 +1957,11 @@
             name="DSC_1168-20241207_422.2btjmarclolc" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1168-20241207_422.2btjmarclolc.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1168-20241207_422.2btjmarclolc.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 720 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:05:39","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 720","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14517222222222,113.30044444444444],"name":"DSC_1168-20241207_422.2btjmarclolc","path":"GuangzhouZoo/DSC_1168-20241207_422.2btjmarclolc.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1168-20241207_422.2btjmarclolc.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1168-20241207_422.2btjmarclolc.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1168-20241207_422.2btjmarclolc.webp"
             aria-label="the photo 73"></a>
+          
           
           
           
@@ -1788,9 +1977,11 @@
             name="DSC_1171-20241207_423.bvcmr34j07s" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1171-20241207_423.bvcmr34j07s.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1171-20241207_423.bvcmr34j07s.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:05:50","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14517222222222,113.30044444444444],"name":"DSC_1171-20241207_423.bvcmr34j07s","path":"GuangzhouZoo/DSC_1171-20241207_423.bvcmr34j07s.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1171-20241207_423.bvcmr34j07s.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1171-20241207_423.bvcmr34j07s.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1171-20241207_423.bvcmr34j07s.webp"
             aria-label="the photo 74"></a>
+          
           
           
           
@@ -1806,9 +1997,11 @@
             name="DSC_1179-20241207_424.2m4k2bsjtyo0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1179-20241207_424.2m4k2bsjtyo0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1179-20241207_424.2m4k2bsjtyo0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1100 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:07:15","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14517222222222,113.30044444444444],"name":"DSC_1179-20241207_424.2m4k2bsjtyo0","path":"GuangzhouZoo/DSC_1179-20241207_424.2m4k2bsjtyo0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1179-20241207_424.2m4k2bsjtyo0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1179-20241207_424.2m4k2bsjtyo0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1179-20241207_424.2m4k2bsjtyo0.webp"
             aria-label="the photo 75"></a>
+          
           
           
           
@@ -1824,9 +2017,11 @@
             name="DSC_1180-20241207_425.7enymx2fwb80" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1180-20241207_425.7enymx2fwb80.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1180-20241207_425.7enymx2fwb80.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 2200 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:07:56","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 2200","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14517222222222,113.30044444444444],"name":"DSC_1180-20241207_425.7enymx2fwb80","path":"GuangzhouZoo/DSC_1180-20241207_425.7enymx2fwb80.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1180-20241207_425.7enymx2fwb80.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1180-20241207_425.7enymx2fwb80.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1180-20241207_425.7enymx2fwb80.webp"
             aria-label="the photo 76"></a>
+          
           
           
           
@@ -1842,9 +2037,11 @@
             name="DSC_1182-20241207_426.1ccuzh2algdc" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1182-20241207_426.1ccuzh2algdc.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1182-20241207_426.1ccuzh2algdc.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 2200 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:08:17","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 2200","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14517222222222,113.30044444444444],"name":"DSC_1182-20241207_426.1ccuzh2algdc","path":"GuangzhouZoo/DSC_1182-20241207_426.1ccuzh2algdc.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1182-20241207_426.1ccuzh2algdc.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1182-20241207_426.1ccuzh2algdc.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1182-20241207_426.1ccuzh2algdc.webp"
             aria-label="the photo 77"></a>
+          
           
           
           
@@ -1860,9 +2057,11 @@
             name="DSC_1183-20241207_427.24ogeacktp28" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1183-20241207_427.24ogeacktp28.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1183-20241207_427.24ogeacktp28.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 2200 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:08:25","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 2200","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14517222222222,113.30044444444444],"name":"DSC_1183-20241207_427.24ogeacktp28","path":"GuangzhouZoo/DSC_1183-20241207_427.24ogeacktp28.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1183-20241207_427.24ogeacktp28.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1183-20241207_427.24ogeacktp28.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1183-20241207_427.24ogeacktp28.webp"
             aria-label="the photo 78"></a>
+          
           
           
           
@@ -1878,9 +2077,11 @@
             name="DSC_1185-20241207_428.3hr7bcbox0m" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1185-20241207_428.3hr7bcbox0m.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1185-20241207_428.3hr7bcbox0m.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 2200 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:08:53","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 2200","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14517222222222,113.30044444444444],"name":"DSC_1185-20241207_428.3hr7bcbox0m","path":"GuangzhouZoo/DSC_1185-20241207_428.3hr7bcbox0m.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1185-20241207_428.3hr7bcbox0m.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1185-20241207_428.3hr7bcbox0m.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1185-20241207_428.3hr7bcbox0m.webp"
             aria-label="the photo 79"></a>
+          
           
           
           
@@ -1896,9 +2097,11 @@
             name="DSC_1188-20241207_429.1y324596kso0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1188-20241207_429.1y324596kso0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1188-20241207_429.1y324596kso0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 1600 135mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:10:07","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"135mm","EXIF ISOSpeedRatings":"ISO 1600","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14517222222222,113.30044444444444],"name":"DSC_1188-20241207_429.1y324596kso0","path":"GuangzhouZoo/DSC_1188-20241207_429.1y324596kso0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1188-20241207_429.1y324596kso0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1188-20241207_429.1y324596kso0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1188-20241207_429.1y324596kso0.webp"
             aria-label="the photo 80"></a>
+          
           
           
           
@@ -1914,9 +2117,11 @@
             name="DSC_1193-20241207_430.49luqulitoo0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1193-20241207_430.49luqulitoo0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1193-20241207_430.49luqulitoo0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F5 ISO 5600 42mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:12:19","EXIF ExposureTime":"1/320s","EXIF FNumber":"F5","EXIF FocalLength":"42mm","EXIF ISOSpeedRatings":"ISO 5600","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14616111111111,113.30072777777778],"name":"DSC_1193-20241207_430.49luqulitoo0","path":"GuangzhouZoo/DSC_1193-20241207_430.49luqulitoo0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1193-20241207_430.49luqulitoo0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1193-20241207_430.49luqulitoo0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1193-20241207_430.49luqulitoo0.webp"
             aria-label="the photo 81"></a>
+          
           
           
           
@@ -1932,9 +2137,11 @@
             name="DSC_1194-20241207_431.ezi1sunfxvc" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1194-20241207_431.ezi1sunfxvc.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1194-20241207_431.ezi1sunfxvc.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 22800 89mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:12:50","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"89mm","EXIF ISOSpeedRatings":"ISO 22800","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14616111111111,113.30072777777778],"name":"DSC_1194-20241207_431.ezi1sunfxvc","path":"GuangzhouZoo/DSC_1194-20241207_431.ezi1sunfxvc.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1194-20241207_431.ezi1sunfxvc.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1194-20241207_431.ezi1sunfxvc.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1194-20241207_431.ezi1sunfxvc.webp"
             aria-label="the photo 82"></a>
+          
           
           
           
@@ -1950,9 +2157,11 @@
             name="DSC_1195-20241207_432.23sjwuwb5934" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1195-20241207_432.23sjwuwb5934.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1195-20241207_432.23sjwuwb5934.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 22800 96mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:13:11","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"96mm","EXIF ISOSpeedRatings":"ISO 22800","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14616111111111,113.30072777777778],"name":"DSC_1195-20241207_432.23sjwuwb5934","path":"GuangzhouZoo/DSC_1195-20241207_432.23sjwuwb5934.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1195-20241207_432.23sjwuwb5934.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1195-20241207_432.23sjwuwb5934.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1195-20241207_432.23sjwuwb5934.webp"
             aria-label="the photo 83"></a>
+          
           
           
           
@@ -1968,9 +2177,11 @@
             name="DSC_1196-20241207_433.1w3rqz65u6ao" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1196-20241207_433.1w3rqz65u6ao.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1196-20241207_433.1w3rqz65u6ao.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 22800 86mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:13:20","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"86mm","EXIF ISOSpeedRatings":"ISO 22800","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14616111111111,113.30072777777778],"name":"DSC_1196-20241207_433.1w3rqz65u6ao","path":"GuangzhouZoo/DSC_1196-20241207_433.1w3rqz65u6ao.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1196-20241207_433.1w3rqz65u6ao.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1196-20241207_433.1w3rqz65u6ao.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1196-20241207_433.1w3rqz65u6ao.webp"
             aria-label="the photo 84"></a>
+          
           
           
           
@@ -1986,9 +2197,11 @@
             name="DSC_1197-20241207_434.2kh6lw19th20" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1197-20241207_434.2kh6lw19th20.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1197-20241207_434.2kh6lw19th20.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F5.6 ISO 18000 52mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:13:23","EXIF ExposureTime":"1/320s","EXIF FNumber":"F5.6","EXIF FocalLength":"52mm","EXIF ISOSpeedRatings":"ISO 18000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14616111111111,113.30072777777778],"name":"DSC_1197-20241207_434.2kh6lw19th20","path":"GuangzhouZoo/DSC_1197-20241207_434.2kh6lw19th20.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1197-20241207_434.2kh6lw19th20.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1197-20241207_434.2kh6lw19th20.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1197-20241207_434.2kh6lw19th20.webp"
             aria-label="the photo 85"></a>
+          
           
           
           
@@ -2004,9 +2217,11 @@
             name="DSC_1199-20241207_435.79gvp5kdcyw0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1199-20241207_435.79gvp5kdcyw0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1199-20241207_435.79gvp5kdcyw0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F5.6 ISO 18000 52mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:13:34","EXIF ExposureTime":"1/320s","EXIF FNumber":"F5.6","EXIF FocalLength":"52mm","EXIF ISOSpeedRatings":"ISO 18000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14616111111111,113.30072777777778],"name":"DSC_1199-20241207_435.79gvp5kdcyw0","path":"GuangzhouZoo/DSC_1199-20241207_435.79gvp5kdcyw0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1199-20241207_435.79gvp5kdcyw0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1199-20241207_435.79gvp5kdcyw0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1199-20241207_435.79gvp5kdcyw0.webp"
             aria-label="the photo 86"></a>
+          
           
           
           
@@ -2022,9 +2237,11 @@
             name="DSC_1200-20241207_436.184n5x15dgq" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1200-20241207_436.184n5x15dgq.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1200-20241207_436.184n5x15dgq.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/320s F5.6 ISO 18000 52mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:13:38","EXIF ExposureTime":"1/320s","EXIF FNumber":"F5.6","EXIF FocalLength":"52mm","EXIF ISOSpeedRatings":"ISO 18000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14616111111111,113.30072777777778],"name":"DSC_1200-20241207_436.184n5x15dgq","path":"GuangzhouZoo/DSC_1200-20241207_436.184n5x15dgq.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1200-20241207_436.184n5x15dgq.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1200-20241207_436.184n5x15dgq.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1200-20241207_436.184n5x15dgq.webp"
             aria-label="the photo 87"></a>
+          
           
           
           
@@ -2040,9 +2257,11 @@
             name="DSC_1210-20241207_437.70kh8bxn9gw0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1210-20241207_437.70kh8bxn9gw0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1210-20241207_437.70kh8bxn9gw0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 2800 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:15:29","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 2800","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14616111111111,113.30072777777778],"name":"DSC_1210-20241207_437.70kh8bxn9gw0","path":"GuangzhouZoo/DSC_1210-20241207_437.70kh8bxn9gw0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1210-20241207_437.70kh8bxn9gw0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1210-20241207_437.70kh8bxn9gw0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1210-20241207_437.70kh8bxn9gw0.webp"
             aria-label="the photo 88"></a>
+          
           
           
           
@@ -2058,9 +2277,11 @@
             name="DSC_1212-20241207_438.6on2ryic3g40" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1212-20241207_438.6on2ryic3g40.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1212-20241207_438.6on2ryic3g40.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 2200 99mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:15:37","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"99mm","EXIF ISOSpeedRatings":"ISO 2200","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14616111111111,113.30072777777778],"name":"DSC_1212-20241207_438.6on2ryic3g40","path":"GuangzhouZoo/DSC_1212-20241207_438.6on2ryic3g40.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1212-20241207_438.6on2ryic3g40.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1212-20241207_438.6on2ryic3g40.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1212-20241207_438.6on2ryic3g40.webp"
             aria-label="the photo 89"></a>
+          
           
           
           
@@ -2076,9 +2297,11 @@
             name="DSC_1224-20241207_439.1tl6mdimsrk0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1224-20241207_439.1tl6mdimsrk0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1224-20241207_439.1tl6mdimsrk0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6 ISO 2000 72mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:16:53","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6","EXIF FocalLength":"72mm","EXIF ISOSpeedRatings":"ISO 2000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14616111111111,113.30072777777778],"name":"DSC_1224-20241207_439.1tl6mdimsrk0","path":"GuangzhouZoo/DSC_1224-20241207_439.1tl6mdimsrk0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1224-20241207_439.1tl6mdimsrk0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1224-20241207_439.1tl6mdimsrk0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1224-20241207_439.1tl6mdimsrk0.webp"
             aria-label="the photo 90"></a>
+          
           
           
           
@@ -2094,9 +2317,11 @@
             name="DSC_1225-20241207_440.2r2l6j1th18" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1225-20241207_440.2r2l6j1th18.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1225-20241207_440.2r2l6j1th18.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F5.6 ISO 1400 48mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:16:57","EXIF ExposureTime":"1/60s","EXIF FNumber":"F5.6","EXIF FocalLength":"48mm","EXIF ISOSpeedRatings":"ISO 1400","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14616111111111,113.30072777777778],"name":"DSC_1225-20241207_440.2r2l6j1th18","path":"GuangzhouZoo/DSC_1225-20241207_440.2r2l6j1th18.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1225-20241207_440.2r2l6j1th18.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1225-20241207_440.2r2l6j1th18.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1225-20241207_440.2r2l6j1th18.webp"
             aria-label="the photo 91"></a>
+          
           
           
           
@@ -2112,9 +2337,11 @@
             name="DSC_1226-20241207_441.27ircegez340" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1226-20241207_441.27ircegez340.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1226-20241207_441.27ircegez340.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F5.6 ISO 1400 48mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:16:57","EXIF ExposureTime":"1/60s","EXIF FNumber":"F5.6","EXIF FocalLength":"48mm","EXIF ISOSpeedRatings":"ISO 1400","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14616111111111,113.30072777777778],"name":"DSC_1226-20241207_441.27ircegez340","path":"GuangzhouZoo/DSC_1226-20241207_441.27ircegez340.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1226-20241207_441.27ircegez340.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1226-20241207_441.27ircegez340.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1226-20241207_441.27ircegez340.webp"
             aria-label="the photo 92"></a>
+          
           
           
           
@@ -2130,9 +2357,11 @@
             name="DSC_1230-20241207_442.5i7i8ieo6zc0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1230-20241207_442.5i7i8ieo6zc0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1230-20241207_442.5i7i8ieo6zc0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 4500 180mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:17:37","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"180mm","EXIF ISOSpeedRatings":"ISO 4500","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14616111111111,113.30072777777778],"name":"DSC_1230-20241207_442.5i7i8ieo6zc0","path":"GuangzhouZoo/DSC_1230-20241207_442.5i7i8ieo6zc0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1230-20241207_442.5i7i8ieo6zc0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1230-20241207_442.5i7i8ieo6zc0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1230-20241207_442.5i7i8ieo6zc0.webp"
             aria-label="the photo 93"></a>
+          
           
           
           
@@ -2148,9 +2377,11 @@
             name="DSC_1234-20241207_443.42ggw0dlmh00" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1234-20241207_443.42ggw0dlmh00.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1234-20241207_443.42ggw0dlmh00.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6 ISO 720 66mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:18:51","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6","EXIF FocalLength":"66mm","EXIF ISOSpeedRatings":"ISO 720","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.147025,113.30044166666666],"name":"DSC_1234-20241207_443.42ggw0dlmh00","path":"GuangzhouZoo/DSC_1234-20241207_443.42ggw0dlmh00.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1234-20241207_443.42ggw0dlmh00.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1234-20241207_443.42ggw0dlmh00.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1234-20241207_443.42ggw0dlmh00.webp"
             aria-label="the photo 94"></a>
+          
           
           
           
@@ -2166,9 +2397,11 @@
             name="DSC_1245-20241207_444.715g94fcajc0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1245-20241207_444.715g94fcajc0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1245-20241207_444.715g94fcajc0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 2800 130mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:21:36","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"130mm","EXIF ISOSpeedRatings":"ISO 2800","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.147025,113.30044166666666],"name":"DSC_1245-20241207_444.715g94fcajc0","path":"GuangzhouZoo/DSC_1245-20241207_444.715g94fcajc0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1245-20241207_444.715g94fcajc0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1245-20241207_444.715g94fcajc0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1245-20241207_444.715g94fcajc0.webp"
             aria-label="the photo 95"></a>
+          
           
           
           
@@ -2184,9 +2417,11 @@
             name="DSC_1247-20241207_445.5j97uw48ivk0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1247-20241207_445.5j97uw48ivk0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1247-20241207_445.5j97uw48ivk0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 560 83mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:22:04","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"83mm","EXIF ISOSpeedRatings":"ISO 560","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.147025,113.30044166666666],"name":"DSC_1247-20241207_445.5j97uw48ivk0","path":"GuangzhouZoo/DSC_1247-20241207_445.5j97uw48ivk0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1247-20241207_445.5j97uw48ivk0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1247-20241207_445.5j97uw48ivk0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1247-20241207_445.5j97uw48ivk0.webp"
             aria-label="the photo 96"></a>
+          
           
           
           
@@ -2202,9 +2437,11 @@
             name="DSC_1248-20241207_446.56st9wxkhao0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1248-20241207_446.56st9wxkhao0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1248-20241207_446.56st9wxkhao0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F4.2 ISO 3200 28mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:22:50","EXIF ExposureTime":"1/60s","EXIF FNumber":"F4.2","EXIF FocalLength":"28mm","EXIF ISOSpeedRatings":"ISO 3200","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.147025,113.30044166666666],"name":"DSC_1248-20241207_446.56st9wxkhao0","path":"GuangzhouZoo/DSC_1248-20241207_446.56st9wxkhao0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1248-20241207_446.56st9wxkhao0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1248-20241207_446.56st9wxkhao0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1248-20241207_446.56st9wxkhao0.webp"
             aria-label="the photo 97"></a>
+          
           
           
           
@@ -2220,9 +2457,11 @@
             name="DSC_1254-20241207_447.a3uapzqlcig" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1254-20241207_447.a3uapzqlcig.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1254-20241207_447.a3uapzqlcig.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 800 94mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:25:25","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"94mm","EXIF ISOSpeedRatings":"ISO 800","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.147025,113.30044166666666],"name":"DSC_1254-20241207_447.a3uapzqlcig","path":"GuangzhouZoo/DSC_1254-20241207_447.a3uapzqlcig.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1254-20241207_447.a3uapzqlcig.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1254-20241207_447.a3uapzqlcig.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1254-20241207_447.a3uapzqlcig.webp"
             aria-label="the photo 98"></a>
+          
           
           
           
@@ -2238,9 +2477,11 @@
             name="DSC_1256-20241207_448.7fmbqkxmrn80" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1256-20241207_448.7fmbqkxmrn80.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1256-20241207_448.7fmbqkxmrn80.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6 ISO 2000 67mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:27:17","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6","EXIF FocalLength":"67mm","EXIF ISOSpeedRatings":"ISO 2000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.147025,113.30044166666666],"name":"DSC_1256-20241207_448.7fmbqkxmrn80","path":"GuangzhouZoo/DSC_1256-20241207_448.7fmbqkxmrn80.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1256-20241207_448.7fmbqkxmrn80.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1256-20241207_448.7fmbqkxmrn80.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1256-20241207_448.7fmbqkxmrn80.webp"
             aria-label="the photo 99"></a>
+          
           
           
           
@@ -2256,9 +2497,11 @@
             name="DSC_1259-20241207_449.65q3lp4edo00" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1259-20241207_449.65q3lp4edo00.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1259-20241207_449.65q3lp4edo00.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 2000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:27:37","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 2000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.147025,113.30044166666666],"name":"DSC_1259-20241207_449.65q3lp4edo00","path":"GuangzhouZoo/DSC_1259-20241207_449.65q3lp4edo00.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1259-20241207_449.65q3lp4edo00.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1259-20241207_449.65q3lp4edo00.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1259-20241207_449.65q3lp4edo00.webp"
             aria-label="the photo 100"></a>
+          
           
           
           
@@ -2274,9 +2517,11 @@
             name="DSC_1263-20241207_450.2okz7iub3pw0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1263-20241207_450.2okz7iub3pw0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1263-20241207_450.2okz7iub3pw0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 1000 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:31:34","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.146319444444444,113.30030555555555],"name":"DSC_1263-20241207_450.2okz7iub3pw0","path":"GuangzhouZoo/DSC_1263-20241207_450.2okz7iub3pw0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1263-20241207_450.2okz7iub3pw0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1263-20241207_450.2okz7iub3pw0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1263-20241207_450.2okz7iub3pw0.webp"
             aria-label="the photo 101"></a>
+          
           
           
           
@@ -2292,9 +2537,11 @@
             name="DSC_1264-20241207_451.2htdlzqqz2e0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1264-20241207_451.2htdlzqqz2e0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1264-20241207_451.2htdlzqqz2e0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 1250 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:31:41","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 1250","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.146319444444444,113.30030555555555],"name":"DSC_1264-20241207_451.2htdlzqqz2e0","path":"GuangzhouZoo/DSC_1264-20241207_451.2htdlzqqz2e0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1264-20241207_451.2htdlzqqz2e0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1264-20241207_451.2htdlzqqz2e0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1264-20241207_451.2htdlzqqz2e0.webp"
             aria-label="the photo 102"></a>
+          
           
           
           
@@ -2310,9 +2557,11 @@
             name="DSC_1269-20241207_452.3muc68fxqr40" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1269-20241207_452.3muc68fxqr40.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1269-20241207_452.3muc68fxqr40.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 900 105mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:32:03","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"105mm","EXIF ISOSpeedRatings":"ISO 900","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.146319444444444,113.30030555555555],"name":"DSC_1269-20241207_452.3muc68fxqr40","path":"GuangzhouZoo/DSC_1269-20241207_452.3muc68fxqr40.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1269-20241207_452.3muc68fxqr40.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1269-20241207_452.3muc68fxqr40.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1269-20241207_452.3muc68fxqr40.webp"
             aria-label="the photo 103"></a>
+          
           
           
           
@@ -2328,9 +2577,11 @@
             name="DSC_1270-20241207_453.4qjxqdnb15e0" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1270-20241207_453.4qjxqdnb15e0.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1270-20241207_453.4qjxqdnb15e0.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 900 105mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:32:03","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"105mm","EXIF ISOSpeedRatings":"ISO 900","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.146319444444444,113.30030555555555],"name":"DSC_1270-20241207_453.4qjxqdnb15e0","path":"GuangzhouZoo/DSC_1270-20241207_453.4qjxqdnb15e0.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1270-20241207_453.4qjxqdnb15e0.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1270-20241207_453.4qjxqdnb15e0.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1270-20241207_453.4qjxqdnb15e0.webp"
             aria-label="the photo 104"></a>
+          
           
           
           
@@ -2346,9 +2597,11 @@
             name="DSC_1284-20241207_454.2g7z1qpt42vw" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1284-20241207_454.2g7z1qpt42vw.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1284-20241207_454.2g7z1qpt42vw.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 9000 120mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:40:51","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"120mm","EXIF ISOSpeedRatings":"ISO 9000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.141877777777776,113.29809722222222],"name":"DSC_1284-20241207_454.2g7z1qpt42vw","path":"GuangzhouZoo/DSC_1284-20241207_454.2g7z1qpt42vw.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1284-20241207_454.2g7z1qpt42vw.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1284-20241207_454.2g7z1qpt42vw.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1284-20241207_454.2g7z1qpt42vw.webp"
             aria-label="the photo 105"></a>
+          
           
           
           
@@ -2364,6 +2617,7 @@
             name="DSC_1288-20241207_455.16m33u8uj0tc" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1288-20241207_455.16m33u8uj0tc.webp"
             desc=" - · - "
             share="GuangzhouZoo/DSC_1288-20241207_455.16m33u8uj0tc.webp"
+            video=""
             extra='{"desc":null,"dir":"GuangzhouZoo","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6 ISO 320 77mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2024:12:07 17:43:06","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6","EXIF FocalLength":"77mm","EXIF ISOSpeedRatings":"ISO 320","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[23.14278611111111,113.29797777777777],"name":"DSC_1288-20241207_455.16m33u8uj0tc","path":"GuangzhouZoo/DSC_1288-20241207_455.16m33u8uj0tc.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1288-20241207_455.16m33u8uj0tc.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/GuangzhouZoo/DSC_1288-20241207_455.16m33u8uj0tc.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//GuangzhouZoo/DSC_1288-20241207_455.16m33u8uj0tc.webp"
             aria-label="the photo 106"></a>
@@ -2445,6 +2699,7 @@
           name = target.getAttribute('name');
           var desc = target.getAttribute('desc');
           var thum = target.getAttribute('data-src');
+          var video = target.getAttribute('video');
           var v = JSON.parse(target.getAttribute('extra'));
           imageBox.src = thum;
           imageBox.classList.add('blur');
@@ -2458,6 +2713,9 @@
           imageBox.setAttribute("share", target.getAttribute('share'));
           var imageFancy = imageBox.parentElement; // imageBox 是放置大图片的图框
           imageFancy.setAttribute("href", imgLink);
+
+          var picg = document.getElementById('pic-g');
+          attachLivePhoto(picg, video !== '', video);
           var fancyBoxImage = document.getElementsByClassName("fancybox__image")[0];
           if (fancyBoxImage !== undefined) {
             fancyBoxImage.src = imgLink;
@@ -2742,6 +3000,7 @@
             border: 0.8px solid white;
           }
         }
+
       </style>
 </section>
   <!-- Footer -->

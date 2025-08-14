@@ -283,12 +283,13 @@
 </style>
   <!-- Main Content -->
   <script src="js/html2canvas.js"></script>
+<script src="js/mini-live-photo.js"></script>
 <section class="pjax-area">
   <div class="content-area post-album fullscreen-content-area">
     <div class="grid grid-cols-3">
       <div class="fullscreen-pic gap-2 wrapper">
         <div id="all-pic" class="pic-area">
-          <div class="pic-item" />
+          <div id="pic-g" class="pic-item" />
           <img id="imgbox" class="pic-box" src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3650.webp" />
         </div>
         <div id="exif-wrapper" class="pic-wrapper">
@@ -371,7 +372,7 @@
     @media (max-width: 768px) {
         .pic-wrapper {
             padding: 4px 0px;
-        }        
+        }
 
         #exif-param {
             font-size: .5rem;
@@ -395,12 +396,12 @@
         }
     }
 
-    .apple-logo, 
-    .ricoh-logo, 
+    .apple-logo,
+    .ricoh-logo,
     .fujifilm-logo {
         height: 40px;
     }
-    
+
     .nikon-logo {
         height: 50px;
     }
@@ -413,10 +414,10 @@
     .dji-logo {
         width: 60px;
     }
-    
+
     @media (max-width: 768px) {
-        .apple-logo, 
-        .ricoh-logo, 
+        .apple-logo,
+        .ricoh-logo,
         .nikon-logo,
         .fujifilm-logo {
             height: 30px;
@@ -435,8 +436,47 @@
             border-width: thin;
             background-color: white;
             border-color: white;
-        }        
+        }
     }
+
+.mlp-wrap {
+    overflow: hidden;
+    border-radius: inherit;    /* 如果父级有圆角，继承一下更自然 */
+}
+
+.mlp-wrap, [data-livephoto] { position: relative; overflow: hidden; border-radius: inherit; }
+
+/* 初始隐藏视频，启用硬件合成避免闪烁 */
+.mlp-wrap .mlp-video, [data-livephoto] .mlp-video{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:contain;
+  opacity:0; transition:opacity .18s ease, transform .25s ease;
+  will-change: opacity, transform; pointer-events:none;
+}
+
+/* “首帧就绪”后，允许显示（只把不透明度交给 JS 控） */
+.mlp-wrap.is-prepped .mlp-video,
+[data-livephoto].is-prepped .mlp-video{ opacity:0; }
+
+/* 开始播放时再交叉淡入 */
+.mlp-wrap.is-playing .mlp-video,
+[data-livephoto].is-playing .mlp-video{ opacity:1; }
+
+/* （可选）缩放动画 */
+.mlp-wrap.is-zoom .mlp-video,
+[data-livephoto].is-zoom .mlp-video{ transform: scale(1.04); }
+
+[data-livephoto].is-playing {
+  -webkit-touch-callout: none;
+  user-select: none;
+  touch-action: none;
+}
+
+/* 禁止浏览器把 img/video 当成可拖拽对象 */
+[data-livephoto] img,
+[data-livephoto] video {
+  -webkit-user-drag: none;
+  user-drag: none; /* 非标准，但部分浏览器支持 */
+}
 </style>
       </div>
       <p id="descbox" class="text-center text-xs hint-text" hidden>  </p>
@@ -452,13 +492,16 @@
           
           
           
+          
           <a class="album-item lazy" id="0"
             name="DSC_3650" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3650.webp"
             desc=" - · - "
             share="Asakusa/DSC_3650.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/400s F4.5 ISO 100 30mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:06:46","EXIF ExposureTime":"1/400s","EXIF FNumber":"F4.5","EXIF FocalLength":"30mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3650","path":"Asakusa/DSC_3650.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3650.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3650.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3650.webp"
             aria-label="the photo 0"></a>
+          
           
           
           
@@ -474,9 +517,11 @@
             name="DSC_3653" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3653.webp"
             desc=" - · - "
             share="Asakusa/DSC_3653.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/640s F4.5 ISO 100 30mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:07:04","EXIF ExposureTime":"1/640s","EXIF FNumber":"F4.5","EXIF FocalLength":"30mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3653","path":"Asakusa/DSC_3653.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3653.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3653.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3653.webp"
             aria-label="the photo 1"></a>
+          
           
           
           
@@ -492,9 +537,11 @@
             name="DSC_3655" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3655.webp"
             desc=" - · - "
             share="Asakusa/DSC_3655.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/60s F5.3 ISO 110 45mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:08:43","EXIF ExposureTime":"1/60s","EXIF FNumber":"F5.3","EXIF FocalLength":"45mm","EXIF ISOSpeedRatings":"ISO 110","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3655","path":"Asakusa/DSC_3655.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3655.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3655.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3655.webp"
             aria-label="the photo 2"></a>
+          
           
           
           
@@ -510,9 +557,11 @@
             name="DSC_3656" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3656.webp"
             desc=" - · - "
             share="Asakusa/DSC_3656.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/320s F5.3 ISO 100 45mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:08:46","EXIF ExposureTime":"1/320s","EXIF FNumber":"F5.3","EXIF FocalLength":"45mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3656","path":"Asakusa/DSC_3656.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3656.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3656.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3656.webp"
             aria-label="the photo 3"></a>
+          
           
           
           
@@ -528,9 +577,11 @@
             name="DSC_3660" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3660.webp"
             desc=" - · - "
             share="Asakusa/DSC_3660.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/800s F6.3 ISO 100 200mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:09:48","EXIF ExposureTime":"1/800s","EXIF FNumber":"F6.3","EXIF FocalLength":"200mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3660","path":"Asakusa/DSC_3660.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3660.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3660.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3660.webp"
             aria-label="the photo 4"></a>
+          
           
           
           
@@ -546,9 +597,11 @@
             name="DSC_3665" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3665.webp"
             desc=" - · - "
             share="Asakusa/DSC_3665.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6.3 ISO 200 140mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:10:51","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6.3","EXIF FocalLength":"140mm","EXIF ISOSpeedRatings":"ISO 200","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3665","path":"Asakusa/DSC_3665.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3665.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3665.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3665.webp"
             aria-label="the photo 5"></a>
+          
           
           
           
@@ -564,9 +617,11 @@
             name="DSC_3675" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3675.webp"
             desc=" - · - "
             share="Asakusa/DSC_3675.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/2000s F5.6 ISO 100 57mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:14:33","EXIF ExposureTime":"1/2000s","EXIF FNumber":"F5.6","EXIF FocalLength":"57mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3675","path":"Asakusa/DSC_3675.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3675.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3675.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3675.webp"
             aria-label="the photo 6"></a>
+          
           
           
           
@@ -582,9 +637,11 @@
             name="DSC_3676" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3676.webp"
             desc=" - · - "
             share="Asakusa/DSC_3676.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/640s F6.3 ISO 100 155mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:15:11","EXIF ExposureTime":"1/640s","EXIF FNumber":"F6.3","EXIF FocalLength":"155mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3676","path":"Asakusa/DSC_3676.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3676.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3676.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3676.webp"
             aria-label="the photo 7"></a>
+          
           
           
           
@@ -600,9 +657,11 @@
             name="DSC_3679" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3679.webp"
             desc=" - · - "
             share="Asakusa/DSC_3679.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/400s F5 ISO 100 40mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:15:51","EXIF ExposureTime":"1/400s","EXIF FNumber":"F5","EXIF FocalLength":"40mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3679","path":"Asakusa/DSC_3679.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3679.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3679.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3679.webp"
             aria-label="the photo 8"></a>
+          
           
           
           
@@ -618,9 +677,11 @@
             name="DSC_3681" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3681.webp"
             desc=" - · - "
             share="Asakusa/DSC_3681.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/800s F6 ISO 100 59mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:16:42","EXIF ExposureTime":"1/800s","EXIF FNumber":"F6","EXIF FocalLength":"59mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3681","path":"Asakusa/DSC_3681.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3681.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3681.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3681.webp"
             aria-label="the photo 9"></a>
+          
           
           
           
@@ -636,9 +697,11 @@
             name="DSC_3692" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3692.webp"
             desc=" - · - "
             share="Asakusa/DSC_3692.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/2000s F5.3 ISO 100 47mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:17:27","EXIF ExposureTime":"1/2000s","EXIF FNumber":"F5.3","EXIF FocalLength":"47mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3692","path":"Asakusa/DSC_3692.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3692.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3692.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3692.webp"
             aria-label="the photo 10"></a>
+          
           
           
           
@@ -654,9 +717,11 @@
             name="DSC_3699" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3699.webp"
             desc=" - · - "
             share="Asakusa/DSC_3699.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/800s F5.6 ISO 100 48mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:25:24","EXIF ExposureTime":"1/800s","EXIF FNumber":"F5.6","EXIF FocalLength":"48mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3699","path":"Asakusa/DSC_3699.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3699.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3699.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3699.webp"
             aria-label="the photo 11"></a>
+          
           
           
           
@@ -672,9 +737,11 @@
             name="DSC_3701" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3701.webp"
             desc=" - · - "
             share="Asakusa/DSC_3701.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/60s F4 ISO 900 24mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:33:33","EXIF ExposureTime":"1/60s","EXIF FNumber":"F4","EXIF FocalLength":"24mm","EXIF ISOSpeedRatings":"ISO 900","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3701","path":"Asakusa/DSC_3701.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3701.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3701.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3701.webp"
             aria-label="the photo 12"></a>
+          
           
           
           
@@ -690,9 +757,11 @@
             name="DSC_3702" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3702.webp"
             desc=" - · - "
             share="Asakusa/DSC_3702.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/60s F4.8 ISO 3600 32.5mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:33:42","EXIF ExposureTime":"1/60s","EXIF FNumber":"F4.8","EXIF FocalLength":"32.5mm","EXIF ISOSpeedRatings":"ISO 3600","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3702","path":"Asakusa/DSC_3702.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3702.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3702.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3702.webp"
             aria-label="the photo 13"></a>
+          
           
           
           
@@ -708,9 +777,11 @@
             name="DSC_3704" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3704.webp"
             desc=" - · - "
             share="Asakusa/DSC_3704.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/60s F6 ISO 1000 70mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:33:52","EXIF ExposureTime":"1/60s","EXIF FNumber":"F6","EXIF FocalLength":"70mm","EXIF ISOSpeedRatings":"ISO 1000","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3704","path":"Asakusa/DSC_3704.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3704.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3704.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3704.webp"
             aria-label="the photo 14"></a>
+          
           
           
           
@@ -726,9 +797,11 @@
             name="DSC_3705" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3705.webp"
             desc=" - · - "
             share="Asakusa/DSC_3705.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/60s F5.3 ISO 2500 43mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:33:58","EXIF ExposureTime":"1/60s","EXIF FNumber":"F5.3","EXIF FocalLength":"43mm","EXIF ISOSpeedRatings":"ISO 2500","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3705","path":"Asakusa/DSC_3705.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3705.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3705.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3705.webp"
             aria-label="the photo 15"></a>
+          
           
           
           
@@ -744,9 +817,11 @@
             name="DSC_3708" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3708.webp"
             desc=" - · - "
             share="Asakusa/DSC_3708.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/250s F6 ISO 100 74mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:34:54","EXIF ExposureTime":"1/250s","EXIF FNumber":"F6","EXIF FocalLength":"74mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3708","path":"Asakusa/DSC_3708.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3708.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3708.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3708.webp"
             aria-label="the photo 16"></a>
+          
           
           
           
@@ -762,9 +837,11 @@
             name="DSC_3710" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3710.webp"
             desc=" - · - "
             share="Asakusa/DSC_3710.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/2000s F5.6 ISO 100 49mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:35:03","EXIF ExposureTime":"1/2000s","EXIF FNumber":"F5.6","EXIF FocalLength":"49mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3710","path":"Asakusa/DSC_3710.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3710.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3710.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3710.webp"
             aria-label="the photo 17"></a>
+          
           
           
           
@@ -780,9 +857,11 @@
             name="DSC_3712" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3712.webp"
             desc=" - · - "
             share="Asakusa/DSC_3712.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/320s F6.3 ISO 100 110mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:40:41","EXIF ExposureTime":"1/320s","EXIF FNumber":"F6.3","EXIF FocalLength":"110mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3712","path":"Asakusa/DSC_3712.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3712.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3712.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3712.webp"
             aria-label="the photo 18"></a>
+          
           
           
           
@@ -798,9 +877,11 @@
             name="DSC_3713" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3713.webp"
             desc=" - · - "
             share="Asakusa/DSC_3713.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/160s F6.3 ISO 100 150mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:42:03","EXIF ExposureTime":"1/160s","EXIF FNumber":"F6.3","EXIF FocalLength":"150mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3713","path":"Asakusa/DSC_3713.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3713.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3713.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3713.webp"
             aria-label="the photo 19"></a>
+          
           
           
           
@@ -816,9 +897,11 @@
             name="DSC_3718" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3718.webp"
             desc=" - · - "
             share="Asakusa/DSC_3718.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/400s F4.8 ISO 100 36mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:42:39","EXIF ExposureTime":"1/400s","EXIF FNumber":"F4.8","EXIF FocalLength":"36mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3718","path":"Asakusa/DSC_3718.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3718.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3718.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3718.webp"
             aria-label="the photo 20"></a>
+          
           
           
           
@@ -834,9 +917,11 @@
             name="DSC_3720" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3720.webp"
             desc=" - · - "
             share="Asakusa/DSC_3720.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/8000s F4 ISO 100 24mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:43:38","EXIF ExposureTime":"1/8000s","EXIF FNumber":"F4","EXIF FocalLength":"24mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3720","path":"Asakusa/DSC_3720.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3720.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3720.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3720.webp"
             aria-label="the photo 21"></a>
+          
           
           
           
@@ -852,9 +937,11 @@
             name="DSC_3722" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3722.webp"
             desc=" - · - "
             share="Asakusa/DSC_3722.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/3200s F5.3 ISO 100 45mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:43:42","EXIF ExposureTime":"1/3200s","EXIF FNumber":"F5.3","EXIF FocalLength":"45mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3722","path":"Asakusa/DSC_3722.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3722.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3722.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3722.webp"
             aria-label="the photo 22"></a>
+          
           
           
           
@@ -870,9 +957,11 @@
             name="DSC_3725" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3725.webp"
             desc=" - · - "
             share="Asakusa/DSC_3725.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/1000s F4 ISO 100 24mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:44:04","EXIF ExposureTime":"1/1000s","EXIF FNumber":"F4","EXIF FocalLength":"24mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3725","path":"Asakusa/DSC_3725.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3725.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3725.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3725.webp"
             aria-label="the photo 23"></a>
+          
           
           
           
@@ -888,9 +977,11 @@
             name="DSC_3737" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3737.webp"
             desc=" - · - "
             share="Asakusa/DSC_3737.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/800s F5.6 ISO 100 57mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:47:22","EXIF ExposureTime":"1/800s","EXIF FNumber":"F5.6","EXIF FocalLength":"57mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3737","path":"Asakusa/DSC_3737.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3737.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3737.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3737.webp"
             aria-label="the photo 24"></a>
+          
           
           
           
@@ -906,9 +997,11 @@
             name="DSC_3738" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3738.webp"
             desc=" - · - "
             share="Asakusa/DSC_3738.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/2500s F5 ISO 100 38mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:47:36","EXIF ExposureTime":"1/2500s","EXIF FNumber":"F5","EXIF FocalLength":"38mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3738","path":"Asakusa/DSC_3738.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3738.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3738.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3738.webp"
             aria-label="the photo 25"></a>
+          
           
           
           
@@ -924,9 +1017,11 @@
             name="DSC_3739" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3739.webp"
             desc=" - · - "
             share="Asakusa/DSC_3739.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/400s F6 ISO 100 69mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:48:11","EXIF ExposureTime":"1/400s","EXIF FNumber":"F6","EXIF FocalLength":"69mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[],"name":"DSC_3739","path":"Asakusa/DSC_3739.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3739.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3739.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3739.webp"
             aria-label="the photo 26"></a>
+          
           
           
           
@@ -942,9 +1037,11 @@
             name="DSC_3740" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3740.webp"
             desc=" - · - "
             share="Asakusa/DSC_3740.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/1600s F4.8 ISO 100 35mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:49:41","EXIF ExposureTime":"1/1600s","EXIF FNumber":"F4.8","EXIF FocalLength":"35mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.71487777777778,139.79577777777777],"name":"DSC_3740","path":"Asakusa/DSC_3740.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3740.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3740.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3740.webp"
             aria-label="the photo 27"></a>
+          
           
           
           
@@ -960,9 +1057,11 @@
             name="DSC_3742" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3742.webp"
             desc=" - · - "
             share="Asakusa/DSC_3742.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/1600s F5 ISO 100 39mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:50:59","EXIF ExposureTime":"1/1600s","EXIF FNumber":"F5","EXIF FocalLength":"39mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.71473888888889,139.79548333333332],"name":"DSC_3742","path":"Asakusa/DSC_3742.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3742.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3742.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3742.webp"
             aria-label="the photo 28"></a>
+          
           
           
           
@@ -978,9 +1077,11 @@
             name="DSC_3743" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3743.webp"
             desc=" - · - "
             share="Asakusa/DSC_3743.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/1000s F5.6 ISO 100 51mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:51:10","EXIF ExposureTime":"1/1000s","EXIF FNumber":"F5.6","EXIF FocalLength":"51mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.71473888888889,139.79548333333332],"name":"DSC_3743","path":"Asakusa/DSC_3743.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3743.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3743.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3743.webp"
             aria-label="the photo 29"></a>
+          
           
           
           
@@ -996,9 +1097,11 @@
             name="DSC_3746" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3746.webp"
             desc=" - · - "
             share="Asakusa/DSC_3746.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/1250s F5 ISO 100 41mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:52:05","EXIF ExposureTime":"1/1250s","EXIF FNumber":"F5","EXIF FocalLength":"41mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.71473888888889,139.79548333333332],"name":"DSC_3746","path":"Asakusa/DSC_3746.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3746.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3746.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3746.webp"
             aria-label="the photo 30"></a>
+          
           
           
           
@@ -1014,9 +1117,11 @@
             name="DSC_3749" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3749.webp"
             desc=" - · - "
             share="Asakusa/DSC_3749.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/1250s F6.3 ISO 100 150mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:52:31","EXIF ExposureTime":"1/1250s","EXIF FNumber":"F6.3","EXIF FocalLength":"150mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.71473888888889,139.79548333333332],"name":"DSC_3749","path":"Asakusa/DSC_3749.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3749.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3749.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3749.webp"
             aria-label="the photo 31"></a>
+          
           
           
           
@@ -1032,9 +1137,11 @@
             name="DSC_3752" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3752.webp"
             desc=" - · - "
             share="Asakusa/DSC_3752.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/60s F5.6 ISO 100 55mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:54:06","EXIF ExposureTime":"1/60s","EXIF FNumber":"F5.6","EXIF FocalLength":"55mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.71473888888889,139.79548333333332],"name":"DSC_3752","path":"Asakusa/DSC_3752.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3752.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3752.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3752.webp"
             aria-label="the photo 32"></a>
+          
           
           
           
@@ -1050,9 +1157,11 @@
             name="DSC_3753" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3753.webp"
             desc=" - · - "
             share="Asakusa/DSC_3753.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/80s F5.6 ISO 100 55mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:54:31","EXIF ExposureTime":"1/80s","EXIF FNumber":"F5.6","EXIF FocalLength":"55mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.71473888888889,139.79548333333332],"name":"DSC_3753","path":"Asakusa/DSC_3753.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3753.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3753.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3753.webp"
             aria-label="the photo 33"></a>
+          
           
           
           
@@ -1068,9 +1177,11 @@
             name="DSC_3754" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3754.webp"
             desc=" - · - "
             share="Asakusa/DSC_3754.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/500s F6 ISO 100 69mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:54:59","EXIF ExposureTime":"1/500s","EXIF FNumber":"F6","EXIF FocalLength":"69mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.71473888888889,139.79548333333332],"name":"DSC_3754","path":"Asakusa/DSC_3754.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3754.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3754.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3754.webp"
             aria-label="the photo 34"></a>
+          
           
           
           
@@ -1086,9 +1197,11 @@
             name="DSC_3755" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3755.webp"
             desc=" - · - "
             share="Asakusa/DSC_3755.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/640s F6 ISO 100 67mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 10:56:56","EXIF ExposureTime":"1/640s","EXIF FNumber":"F6","EXIF FocalLength":"67mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.71473888888889,139.79548333333332],"name":"DSC_3755","path":"Asakusa/DSC_3755.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3755.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3755.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3755.webp"
             aria-label="the photo 35"></a>
+          
           
           
           
@@ -1104,9 +1217,11 @@
             name="DSC_3758" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3758.webp"
             desc=" - · - "
             share="Asakusa/DSC_3758.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/8000s F4.8 ISO 100 32mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 11:06:03","EXIF ExposureTime":"1/8000s","EXIF FNumber":"F4.8","EXIF FocalLength":"32mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.71436666666667,139.79525277777776],"name":"DSC_3758","path":"Asakusa/DSC_3758.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3758.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3758.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3758.webp"
             aria-label="the photo 36"></a>
+          
           
           
           
@@ -1122,9 +1237,11 @@
             name="DSC_3763" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3763.webp"
             desc=" - · - "
             share="Asakusa/DSC_3763.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/1600s F5 ISO 100 41mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 11:08:52","EXIF ExposureTime":"1/1600s","EXIF FNumber":"F5","EXIF FocalLength":"41mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.71436666666667,139.79525277777776],"name":"DSC_3763","path":"Asakusa/DSC_3763.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3763.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3763.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3763.webp"
             aria-label="the photo 37"></a>
+          
           
           
           
@@ -1140,9 +1257,11 @@
             name="DSC_3764" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3764.webp"
             desc=" - · - "
             share="Asakusa/DSC_3764.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/125s F6.3 ISO 100 82mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 11:09:56","EXIF ExposureTime":"1/125s","EXIF FNumber":"F6.3","EXIF FocalLength":"82mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.71436666666667,139.79525277777776],"name":"DSC_3764","path":"Asakusa/DSC_3764.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3764.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3764.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3764.webp"
             aria-label="the photo 38"></a>
+          
           
           
           
@@ -1158,9 +1277,11 @@
             name="DSC_3765" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3765.webp"
             desc=" - · - "
             share="Asakusa/DSC_3765.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/125s F6.3 ISO 100 165mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 11:10:05","EXIF ExposureTime":"1/125s","EXIF FNumber":"F6.3","EXIF FocalLength":"165mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.71436666666667,139.79525277777776],"name":"DSC_3765","path":"Asakusa/DSC_3765.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3765.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3765.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3765.webp"
             aria-label="the photo 39"></a>
+          
           
           
           
@@ -1176,9 +1297,11 @@
             name="DSC_3766" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3766.webp"
             desc=" - · - "
             share="Asakusa/DSC_3766.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/800s F6 ISO 100 59mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 11:10:28","EXIF ExposureTime":"1/800s","EXIF FNumber":"F6","EXIF FocalLength":"59mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.71436666666667,139.79525277777776],"name":"DSC_3766","path":"Asakusa/DSC_3766.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3766.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3766.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3766.webp"
             aria-label="the photo 40"></a>
+          
           
           
           
@@ -1194,6 +1317,7 @@
             name="DSC_3770" rel="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3770.webp"
             desc=" - · - "
             share="Asakusa/DSC_3770.webp"
+            video=""
             extra='{"desc":null,"dir":"Asakusa","exif":"NIKON CORPORATION NIKON Z 5 1/3200s F4.8 ISO 100 32.5mm NIKKOR Z 24-200mm f/4-6.3 VR ","exif_data":{"EXIF DateTimeOriginal":"2025:01:07 11:10:42","EXIF ExposureTime":"1/3200s","EXIF FNumber":"F4.8","EXIF FocalLength":"32.5mm","EXIF ISOSpeedRatings":"ISO 100","EXIF LensModel":"NIKKOR Z 24-200mm f/4-6.3 VR","Image Make":"NIKON CORPORATION","Image Model":"NIKON Z 5"},"location":[35.71418888888889,139.79652777777778],"name":"DSC_3770","path":"Asakusa/DSC_3770.webp","thum":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3770.webp","url":"https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@master/Asakusa/DSC_3770.webp"}'
             href="javascript:void(0);" onClick="changeimg(event)" data-src="https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail//Asakusa/DSC_3770.webp"
             aria-label="the photo 41"></a>
@@ -1275,6 +1399,7 @@
           name = target.getAttribute('name');
           var desc = target.getAttribute('desc');
           var thum = target.getAttribute('data-src');
+          var video = target.getAttribute('video');
           var v = JSON.parse(target.getAttribute('extra'));
           imageBox.src = thum;
           imageBox.classList.add('blur');
@@ -1288,6 +1413,9 @@
           imageBox.setAttribute("share", target.getAttribute('share'));
           var imageFancy = imageBox.parentElement; // imageBox 是放置大图片的图框
           imageFancy.setAttribute("href", imgLink);
+
+          var picg = document.getElementById('pic-g');
+          attachLivePhoto(picg, video !== '', video);
           var fancyBoxImage = document.getElementsByClassName("fancybox__image")[0];
           if (fancyBoxImage !== undefined) {
             fancyBoxImage.src = imgLink;
@@ -1572,6 +1700,7 @@
             border: 0.8px solid white;
           }
         }
+
       </style>
 </section>
   <!-- Footer -->
