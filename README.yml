@@ -25,7 +25,28 @@
   style: fullscreen
   cover: Hangzhou-Street-Shot/PB080406_DxO.webp
   location: [30.21071740293169, 120.10808853321]
-
+  
+香港-市区:
+  url: Hongkong-Central
+  date: 2025-10-04
+  style: fullscreen
+  cover: Hongkong-Central/DSC_5294_DxO.webp
+  location: [22.28275363972562, 114.15805841120216]
+  
+香港-长洲岛:
+  url: Hongkong-Changzhou
+  date: 2025-10-02
+  style: fullscreen
+  cover: Hongkong-Changzhou/DSC_3841_DxO.webp
+  location: [22.209572307380032, 114.03029659491828]
+  
+杭州小河直街-太苦玛55:
+  url: Hangzhou-Xiaohe-Street-Takumar
+  date: 2025-10-01
+  style: fullscreen
+  cover: Hangzhou-Xiaohe-Street-Takumar/DSC_3462_DxO.webp
+  location: [30.307350800987738, 120.13606291301555]
+  
 杭州西湖大学:
   url: Hangzhou-WestLakeU
   date: 2025-08-16
