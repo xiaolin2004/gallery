@@ -1,10 +1,3 @@
-杭州街拍:
-  url: Hangzhou-Street-Shot
-  date: 2025-12-03
-  style: fullscreen
-  cover: Hangzhou-Street-Shot/PB080406_DxO.webp
-  location: [30.21071740293169, 120.10808853321]
-
 杭州西溪湿地:
   url: Hangzhou-Xixi_wetland
   date: 2025-12-06
@@ -24,6 +17,13 @@
   date: 2025-12-03
   style: fullscreen
   cover: Hangzhou-Jiuxi/PC030807_DxO.703u6pqru4k0.webp
+  location: [30.21071740293169, 120.10808853321]
+
+杭州街拍:
+  url: Hangzhou-Street-Shot
+  date: 2025-11-03
+  style: fullscreen
+  cover: Hangzhou-Street-Shot/PB080406_DxO.webp
   location: [30.21071740293169, 120.10808853321]
 
 杭州西湖大学:
