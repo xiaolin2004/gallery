@@ -26,6 +26,13 @@
   cover: Hangzhou-Street-Shot/PB080406_DxO.webp
   location: [30.21071740293169, 120.10808853321]
   
+香港-市区:
+  url: Hongkong-Central
+  date: 2025-10-04
+  style: fullscreen
+  cover: Hongkong-Central/DSC_5294_DxO.webp
+  location: [22.28275363972562, 114.15805841120216]  
+  
 香港-长洲岛:
   url: Hongkong-Changzhou
   date: 2025-10-02
