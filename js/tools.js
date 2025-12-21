@@ -113,9 +113,6 @@ function wrapperData(v, author) {
       exifLogo.addClass("dji-logo");
       break;
     }
-    default: {
-      break;
-    }
     case "FUJIFILM": {
       exifLogo.attr("src", "img/fujifilm.png");
       exifLogo.addClass("fujifilm-logo");
@@ -130,6 +127,9 @@ function wrapperData(v, author) {
     case "OLYMPUS IMAGING CORP.": {
       exifLogo.attr("src", "img/OlympusLogoBlueAndGoldRGB.png");
       exifLogo.addClass("olympus-logo");
+      break;
+    }
+    default: {
       break;
     }
   }
