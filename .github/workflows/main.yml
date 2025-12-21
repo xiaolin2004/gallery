@@ -10,7 +10,7 @@ on:
 env:
   GIT_USER: xiaolin2004 # change to yourself
   GIT_EMAIL: 1553367438@qq.com # change to yourself
-  THEME_REPO: lfkdsk/hexo-theme-type
+  THEME_REPO: xiaolin2004/hexo-theme-type
   THEME_BRANCH: main
   TEMPLATE_REPO: lfkdsk/album_template
   TEMPLATE_BRANCE: main
