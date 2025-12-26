@@ -118,12 +118,12 @@ function wrapperData(v, author) {
       exifLogo.addClass("fujifilm-logo");
       break;
     }
-    case "OM Digital Solutions": {
+    case "OM Digital Solutions   ": {
       exifLogo.attr("src", "img/om-system.svg");
       exifLogo.addClass("om-system-logo");
       break;
     }
-    case "OLYMPUS CORPORATION": 
+    case "OLYMPUS CORPORATION    ": 
     case "OLYMPUS IMAGING CORP.": {
       exifLogo.attr("src", "img/OlympusLogoBlueAndGoldRGB.png");
       exifLogo.addClass("olympus-logo");
