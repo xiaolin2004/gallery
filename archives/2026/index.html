@@ -22,14 +22,14 @@
   <meta name="author" content="DonkeyKane">
   
   <!--Open Graph Title-->
-  <meta property="og:title" content="Tags" />
+  <meta property="og:title" content="照片集" />
   <!--Open Graph Description-->
   <meta property="og:description" content="拿起相机，认真思考" />
   <!--Open Graph Site Name-->
   <meta property="og:site_name" content="照片集" />
   <!--Type page-->
   
-  <meta property="og:type" content="article" />
+  <meta property="og:type" content="website" />
   
   <!--Page Cover-->
   
@@ -38,7 +38,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <!-- Title -->
   
-  <title>Tags - 照片集</title>
+  <title>归档：2026 - 照片集</title>
   <!-- 添加到主屏后的标题（iOS 6 新增） -->
   <meta name="apple-mobile-web-app-title" content="照片集">
   <!-- 是否启用 WebApp 全屏模式 -->
@@ -282,111 +282,60 @@
   }
 </style>
   <!-- Main Content -->
-  <script src="js/sql-wasm.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-  integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  
 
 <section class="pjax-area">
-  <div id="wrapper"></div>
-  <div id="result" class="container gpro-container grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+  <div class="content-area p-4 container max-w-[1280px]">
+    <div class="index-achieve-title title">2026</div>
+    <div class="text-2xl leading-10 py-2 col-span-1 md:col-span-3 text-tblack dark:text-white">分类</div>
+    <section class="itp-article-categories" style="list-style-type: none;">
+      <div class="itp-m3-chip-color-list">
+        
+      </div>
+    </section>
+    <div class="text-2xl leading-10 py-2 col-span-1 md:col-span-3 text-tblack dark:text-white">标签</div>
+    <section class="itp-article-categories" style="list-style-type: none;">
+      <div class="itp-m3-chip-normal-list">
+        
+      </div>
+    </section>
+    <!-- learn from https://hughsite.com/post/hexo-modify-theme.html -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+  
+  
+  
+  
+  <p class="text-2xl leading-10 py-2 col-span-1 md:col-span-2 lg:col-span-3 gap-1 text-tblack dark:text-white">2026</p>
+  
+  
+  <div class="h-auto px-3 py-1 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-all">
+    <a href="/gallery/2026/undefined/" class="flex items-center">
+      <div class="px-1">
+        <div class="post-title text-tblack dark:text-white">照片集</div>
+        <span class="text-sm leading-4 text-gray-400">2026-01-01</span>
+        
+      </div>
+    </a>
   </div>
-
-  <script type="module">
-    const initSqlJs = window.initSqlJs;
-
-    const SQL = await initSqlJs({
-      locateFile: file => `/gallery/js/sql-wasm.wasm`
-    });
-    const q = `
-SELECT Tag.name
-FROM Tag
-INNER JOIN Photo ON Tag.id = Photo.tag_id
-GROUP BY Tag.id
-HAVING COUNT(Photo.id) > 0;
-    `
-    const sqlite = await fetch('sqlite.db');
-    const sqlite_buf = await sqlite.arrayBuffer();
-    const db = new SQL.Database(new Uint8Array(sqlite_buf));
-    const data = db.exec(q);
-    const wrapper = document.getElementById("wrapper");
-    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    function select(event) {
-      var tag = event.target.innerText;
-      var search = `
-SELECT photo.path FROM photo LEFT JOIN tag on 
-photo.tag_id = tag.id
-WHERE tag.name = "` + tag + "\"";
-      var result = db.exec(search);
-      console.log(result)
-      var res = document.getElementById("result");
-      res.innerHTML = "";
-      for (const item of result) {
-        for (const column of item.values) {
-          for (const imgpath of column) {
-            const ele = document.createElement("a");
-            // ele.href = "/gallery/tags.html"
-            const d = document.createElement("div");
-            d.classList = "gpro-tile lazy"
-            d.setAttribute("style", 'background-image: url("https://cdn.jsdelivr.net/gh/xiaolin2004/gallery@thumbnail/' + imgpath.substr(0, imgpath.lastIndexOf(".")) + '.webp")')
-            ele.appendChild(d);
-            res.appendChild(ele);
-          }
-        }
-      }
-    }
-    for (const item of data) {
-      for (const column of item.values) {
-        const ele = document.createElement('button');
-        ele.classList = 'btn ibtn'
-        if (isDarkMode) {
-          ele.classList.add("btn-light")
-        } else {
-          ele.classList.add("btn-dark")
-        }
-        ele.innerText = column;
-        ele.onclick = (e) => select(e);
-        wrapper.appendChild(ele);
-      }
-    }
-
-  </script>
-  <style>
-    .ibtn {
-      margin: 4px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 90%;
-    }
-
-    .gpro-tile {
-      aspect-ratio: 3 / 2;
-      background-position: center;
-      background-size: cover;
-      transition: all .15s ease-in-out;
-      min-height: 211px;
-    }
-
-    .gpro-tile:hover {
-      box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
-      transition: all .15s ease-in-out;
-    }
-
-    #result {
-      margin-top: 100px;
-      gap: 12px;
-    }
-
-    @media (min-width: 769px) {
-      #wrapper {
-        padding-top: 130px;
-      }
-    }
-  </style>
+  
+  
+</div>
+<style>
+  .post-title {
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  .post-icon {
+    font-size: 1.2em;
+    color: #9DA3AE;
+  }
+</style>
+  </div>
 </section>
+<!--learn from https://github.com/fluid-dev/hexo-theme-fluid/blob/master/layout/archive.ejs-->
   <!-- Footer -->
   <!-- Footer -->
 <footer class="itp-footer text-center">
